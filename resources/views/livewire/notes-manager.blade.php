@@ -77,10 +77,18 @@
         @forelse($notes as $note)
             <div class="note-card" wire:key="note-{{ $note->id }}">
                 <div class="note-header">
-                    <div class="note-priority">
+                    <div class="note-priority" style="display:flex; gap:0.5rem; align-items:center; flex-wrap:wrap;">
                         <span class="priority-badge priority-{{ strtolower($note->priorite) }}">
                             {{ $note->priorite }}
                         </span>
+                        @if($note->estPartagee())
+                            <span class="priority-badge" style="background:#dbeafe; color:#1e40af;">Partagee</span>
+                        @else
+                            <span class="priority-badge" style="background:#f3f4f6; color:#374151;">Privee</span>
+                        @endif
+                        @if($note->estDuClient())
+                            <span class="priority-badge" style="background:#d1fae5; color:#065f46;">Client</span>
+                        @endif
                     </div>
                     <div class="note-actions">
                         <button wire:click="openEditModal({{ $note->id }})" class="action-btn edit-btn" title="Modifier">
@@ -179,6 +187,21 @@
                             @error('priorite') <span class="error-message">{{ $message }}</span> @enderror
                         </div>
                         
+                        <div class="form-group full-width">
+                            <label class="form-label">Visibilite</label>
+                            <div style="display:flex; gap:1.5rem;">
+                                <label style="display:flex; align-items:center; gap:0.5rem; cursor:pointer;">
+                                    <input type="radio" wire:model="type_note" value="privee">
+                                    <span style="font-size:0.875rem;">Privee (moi uniquement)</span>
+                                </label>
+                                <label style="display:flex; align-items:center; gap:0.5rem; cursor:pointer;">
+                                    <input type="radio" wire:model="type_note" value="partagee">
+                                    <span style="font-size:0.875rem;">Partagee (visible par le client)</span>
+                                </label>
+                            </div>
+                            @error('type_note') <span class="error-message">{{ $message }}</span> @enderror
+                        </div>
+
                         <div class="form-group full-width">
                             <label for="titre" class="form-label">Titre *</label>
                             <input type="text" id="titre" wire:model="titre" class="form-input" required>

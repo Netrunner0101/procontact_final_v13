@@ -13,6 +13,7 @@ use App\Http\Controllers\ClientManagementController;
 use App\Http\Controllers\SocialAuthController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\MockOAuthController;
+use App\Http\Controllers\ClientPortalController;
 
 Route::get('/', function () {
     return redirect()->route('dashboard');
@@ -81,6 +82,7 @@ Route::middleware(['auth', 'admin'])->group(function () {
     })->name('statistics.dashboard');
     
     Route::resource('contacts', ContactController::class);
+    Route::post('contacts/{contact}/revoquer-acces', [ContactController::class, 'revoquerAcces'])->name('contacts.revoquer-acces');
     Route::resource('activites', ActiviteController::class);
     Route::resource('rendez-vous', RendezVousController::class);
     
@@ -124,5 +126,13 @@ Route::middleware(['auth', 'client'])->prefix('client')->name('client.')->group(
 });
 
 
+
+// Client Portal (no auth required - magic link access via token)
+Route::prefix('portal')->name('portal.')->group(function () {
+    Route::get('/', [ClientPortalController::class, 'index'])->name('index');
+    Route::get('/rdv/{id}', [ClientPortalController::class, 'showRdv'])->name('rdv');
+    Route::get('/notes', [ClientPortalController::class, 'allNotes'])->name('notes');
+    Route::post('/note', [ClientPortalController::class, 'storeNote'])->name('note.store');
+});
 
 require __DIR__.'/auth.php';

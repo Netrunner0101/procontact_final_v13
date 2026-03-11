@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Contact;
 use App\Models\Status;
+use App\Services\TokenService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
@@ -61,7 +62,7 @@ class ContactController extends Controller
     public function show(Contact $contact)
     {
         $this->authorize('view', $contact);
-        $contact->load(['status', 'emails', 'numeroTelephones', 'rendezVous']);
+        $contact->load(['status', 'emails', 'numeroTelephones', 'rendezVous', 'accessToken']);
         return view('contacts.show', compact('contact'));
     }
 
@@ -97,5 +98,12 @@ class ContactController extends Controller
         $this->authorize('delete', $contact);
         $contact->delete();
         return redirect()->route('contacts.index')->with('success', 'Contact supprimé');
+    }
+
+    public function revoquerAcces(Contact $contact, TokenService $tokenService)
+    {
+        $this->authorize('update', $contact);
+        $tokenService->revoquer($contact->id);
+        return back()->with('success', 'Acces client desactive.');
     }
 }

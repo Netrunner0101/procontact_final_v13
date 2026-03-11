@@ -28,12 +28,14 @@ class NotesManager extends Component
     public $titre = '';
     public $contenu = '';
     public $priorite = 'Normale';
+    public $type_note = 'privee';
 
     protected $rules = [
         'rendez_vous_id' => 'required|exists:rendez_vous,id',
         'titre' => 'required|string|max:255',
         'contenu' => 'required|string',
         'priorite' => 'required|in:Basse,Normale,Haute,Urgente',
+        'type_note' => 'required|in:privee,partagee',
     ];
 
     public function mount()
@@ -105,6 +107,8 @@ class NotesManager extends Component
             'titre' => $this->titre,
             'contenu' => $this->contenu,
             'priorite' => $this->priorite,
+            'type_note' => $this->type_note,
+            'auteur' => 'entrepreneur',
         ]);
 
         $this->closeModals();
@@ -120,6 +124,7 @@ class NotesManager extends Component
             'titre' => $this->titre,
             'contenu' => $this->contenu,
             'priorite' => $this->priorite,
+            'type_note' => $this->type_note,
         ]);
 
         $this->closeModals();
@@ -139,6 +144,7 @@ class NotesManager extends Component
         $this->titre = '';
         $this->contenu = '';
         $this->priorite = 'Normale';
+        $this->type_note = 'privee';
     }
 
     private function fillForm($note)
@@ -147,6 +153,7 @@ class NotesManager extends Component
         $this->titre = $note->titre;
         $this->contenu = $note->contenu;
         $this->priorite = $note->priorite;
+        $this->type_note = $note->type_note ?? 'privee';
     }
 
     public function render()

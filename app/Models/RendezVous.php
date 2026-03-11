@@ -64,6 +64,13 @@ class RendezVous extends Model
         return $this->hasMany(Note::class);
     }
 
+    public function notesPartagees(): HasMany
+    {
+        return $this->hasMany(Note::class)
+                    ->where('type_note', 'partagee')
+                    ->orderBy('created_at', 'asc');
+    }
+
     /**
      * Get the reminders for the appointment.
      */

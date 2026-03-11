@@ -9,9 +9,13 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Mail;
 use App\Mail\RendezVousNotification;
+use App\Services\TokenService;
 
 class RendezVousController extends Controller
 {
+    public function __construct(
+        private TokenService $tokenService
+    ) {}
     public function index()
     {
         $rendezVous = RendezVous::with(['contact', 'activite'])
@@ -51,8 +55,10 @@ class RendezVousController extends Controller
             $contact = Contact::with('emails')->find($validated['contact_id']);
             if ($contact->emails->count() > 0) {
                 try {
+                    $portalToken = $this->tokenService->getOrCreateToken($contact->id);
+                    $portalLink = route('portal.index', ['token' => $portalToken]);
                     Mail::to($contact->emails->first()->email)
-                        ->send(new RendezVousNotification($rendezVous));
+                        ->send(new RendezVousNotification($rendezVous, $portalLink));
                     $message = 'Rendez-vous créé avec succès et email envoyé au client';
                 } catch (\Exception $e) {
                     $message = 'Rendez-vous créé avec succès mais erreur lors de l\'envoi de l\'email';
@@ -131,7 +137,9 @@ class RendezVousController extends Controller
                 }
             }
             
-            $mail->send(new RendezVousNotification($rendezVous));
+            $portalToken = $this->tokenService->getOrCreateToken($rendezVous->contact_id);
+            $portalLink = route('portal.index', ['token' => $portalToken]);
+            $mail->send(new RendezVousNotification($rendezVous, $portalLink));
             
             return redirect()->route('rendez-vous.show', $rendezVous)
                 ->with('success', 'Email envoyé avec succès');

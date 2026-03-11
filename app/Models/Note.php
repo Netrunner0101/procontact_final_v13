@@ -17,6 +17,8 @@ class Note extends Model
         'commentaire',
         'date_create',
         'date_update',
+        'type_note',
+        'auteur',
     ];
 
     protected $casts = [
@@ -38,5 +40,20 @@ class Note extends Model
     public function activite(): BelongsTo
     {
         return $this->belongsTo(Activite::class);
+    }
+
+    public function estPartagee(): bool
+    {
+        return $this->type_note === 'partagee';
+    }
+
+    public function estDuClient(): bool
+    {
+        return $this->auteur === 'client';
+    }
+
+    public function scopePartagees($query)
+    {
+        return $query->where('type_note', 'partagee');
     }
 }

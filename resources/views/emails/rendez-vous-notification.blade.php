@@ -108,6 +108,19 @@
             </div>
         @endif
 
+        @if(!empty($portalLink))
+        <div style="text-align:center; margin: 30px 0;">
+            <a href="{{ $portalLink }}"
+               style="background:#8B5CF6; color:white; padding:12px 24px;
+                      border-radius:6px; text-decoration:none; font-size:16px; display:inline-block;">
+                Voir mon rendez-vous
+            </a>
+        </div>
+        <p style="color:#666; font-size:12px; text-align:center;">
+            Ce lien est personnel. Ne le partagez pas.
+        </p>
+        @endif
+
         <div style="margin-top: 20px; padding: 15px; background-color: #FEF3C7; border-radius: 5px;">
             <p style="margin: 0;"><strong>Important :</strong> Merci de confirmer votre présence ou de nous prévenir en cas d'empêchement.</p>
         </div>

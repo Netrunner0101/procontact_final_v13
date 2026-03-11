@@ -7,7 +7,7 @@
 - **Username:** postgres
 - **Password:** root
 
-## Tables Overview (19 total)
+## Tables Overview (20 total)
 
 ### Core Business Tables
 
@@ -82,6 +82,8 @@
 - `activite_id` (bigint, foreign key to activites)
 - `titre` (varchar) - Note title
 - `commentaire` (text) - Note content
+- `type_note` (enum: 'privee', 'partagee') - Note visibility, default 'privee' - **NEW**
+- `auteur` (enum: 'entrepreneur', 'client') - Note author type, default 'entrepreneur' - **NEW**
 - `date_create` (timestamp) - Creation date
 - `date_update` (timestamp) - Update date
 - `created_at`, `updated_at` (timestamps)
@@ -118,9 +120,17 @@
 - `nombre_rendez_vous` (integer) - Number of appointments
 - `created_at`, `updated_at` (timestamps)
 
+#### 11. client_acces_tokens - **NEW**
+- `id` (bigint, primary key)
+- `contact_id` (bigint, foreign key to contacts, cascade delete)
+- `token` (varchar(255), unique) - UUID magic link token
+- `date_creation` (timestamp) - Token creation date
+- `is_active` (boolean, default true) - Token active status
+- **Indexes:** token, contact_id
+
 ### Pivot Tables
 
-#### 11. contact_activite
+#### 12. contact_activite
 - `id` (bigint, primary key)
 - `contact_id` (bigint, foreign key to contacts)
 - `activite_id` (bigint, foreign key to activites)
@@ -187,8 +197,51 @@
 3. **Fixed Seed Data:** Updated seeders to match actual table structures
 4. **Database Connection:** Successfully configured PostgreSQL connection
 
+## Client Portal Feature (NEW)
+
+### Overview
+Magic link access for clients — no account, no login required. When an entrepreneur sends an appointment email,
+a unique token is generated and included as a portal link. Clients can view their appointment details,
+see shared notes, and add their own notes through this portal.
+
+### New Routes (public, no auth)
+- `GET /portal?token=xxx` - Portal home, shows latest RDV
+- `GET /portal/rdv/{id}?token=xxx` - Specific RDV details
+- `GET /portal/notes?token=xxx` - All shared notes
+- `POST /portal/note` - Client adds a note
+
+### New Files
+- `app/Models/ClientAccesToken.php` - Token model
+- `app/Services/TokenService.php` - Token validation/generation
+- `app/Services/ClientPortalService.php` - Portal business logic
+- `app/Http/Controllers/ClientPortalController.php` - Portal controller
+- `resources/views/layouts/portal.blade.php` - Standalone portal layout
+- `resources/views/portal/rdv.blade.php` - RDV detail view
+- `resources/views/portal/notes.blade.php` - All notes view
+- `resources/views/portal/invalid.blade.php` - Error page
+
+### Modified Files
+- `app/Models/Note.php` - Added type_note, auteur fields + helpers
+- `app/Models/Contact.php` - Added accessToken() relation
+- `app/Models/RendezVous.php` - Added notesPartagees() relation
+- `app/Mail/RendezVousNotification.php` - Added portalLink parameter
+- `app/Http/Controllers/RendezVousController.php` - Token generation on email send
+- `app/Http/Controllers/ContactController.php` - Revoke access action
+- `app/Livewire/NotesManager.php` - Added type_note field
+- `resources/views/emails/rendez-vous-notification.blade.php` - Portal link button
+- `resources/views/livewire/notes-manager.blade.php` - Visibility badges + type selector
+- `resources/views/contacts/show.blade.php` - Portal access status section
+- `routes/web.php` - Portal routes + revoke route
+
+### Security
+- Token validated on every portal request
+- DB queries scoped to contact_id from token
+- Private notes never exposed on portal routes
+- Client note content sanitized with strip_tags()
+- Invalid/revoked tokens return generic error page
+
 ## Application Status
-✅ All 19 tables created successfully
+✅ All 20 tables created successfully
 ✅ All foreign key relationships established
 ✅ Seed data populated
 ✅ Application running on http://127.0.0.1:8000
