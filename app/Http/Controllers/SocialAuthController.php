@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\User;
+use App\Models\Role;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
@@ -55,7 +56,9 @@ class SocialAuthController extends Controller
                 return redirect()->route('dashboard');
             }
             
-            // Create new user
+            // Create new user (admin role by default — entrepreneur)
+            $adminRole = Role::where('nom', Role::ADMIN)->firstOrFail();
+
             $newUser = User::create([
                 'nom' => $googleUser->user['family_name'] ?? '',
                 'prenom' => $googleUser->user['given_name'] ?? $googleUser->name,
@@ -63,11 +66,13 @@ class SocialAuthController extends Controller
                 'google_id' => $googleUser->id,
                 'provider' => 'google',
                 'avatar' => $googleUser->avatar,
-                'password' => Hash::make(Str::random(16)), // Random password
-                'role' => 'admin', // Default role
+                'password' => Hash::make(Str::random(16)),
                 'email_verified_at' => now(),
             ]);
-            
+
+            $newUser->role_id = $adminRole->id;
+            $newUser->save();
+
             Auth::login($newUser);
             return redirect()->route('dashboard');
             
@@ -114,18 +119,22 @@ class SocialAuthController extends Controller
                 return redirect()->route('dashboard');
             }
             
-            // Create new user
+            // Create new user (admin role by default — entrepreneur)
+            $adminRole = Role::where('nom', Role::ADMIN)->firstOrFail();
+
             $newUser = User::create([
                 'nom' => $appleUser->user['name']['lastName'] ?? '',
                 'prenom' => $appleUser->user['name']['firstName'] ?? $appleUser->name ?? 'Utilisateur',
                 'email' => $appleUser->email,
                 'apple_id' => $appleUser->id,
                 'provider' => 'apple',
-                'password' => Hash::make(Str::random(16)), // Random password
-                'role' => 'admin', // Default role
+                'password' => Hash::make(Str::random(16)),
                 'email_verified_at' => now(),
             ]);
-            
+
+            $newUser->role_id = $adminRole->id;
+            $newUser->save();
+
             Auth::login($newUser);
             return redirect()->route('dashboard');
             

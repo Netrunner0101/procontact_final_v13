@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\User;
+use App\Models\Role;
 use App\Models\Contact;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -17,7 +18,7 @@ class ClientManagementController extends Controller
     public function index()
     {
         $clients = Auth::user()->clients()
-            ->with('admin')
+            ->with(['admin', 'role', 'contact'])
             ->orderBy('created_at', 'desc')
             ->paginate(15);
         
@@ -51,14 +52,22 @@ class ClientManagementController extends Controller
             'telephone' => 'nullable|string|max:20',
         ]);
 
-        // If contact is selected, use contact information
+        $contactId = null;
+
+        // If contact is selected, verify it belongs to the current admin
         if ($validated['contact_id']) {
-            $contact = Contact::findOrFail($validated['contact_id']);
+            $contact = Contact::where('user_id', Auth::id())->findOrFail($validated['contact_id']);
             $validated['nom'] = $contact->nom;
             $validated['prenom'] = $contact->prenom;
-            $validated['email'] = $contact->email;
-            $validated['telephone'] = $contact->numerosTelephone->first()?->numero;
+            $contactEmail = $contact->emails()->first();
+            if ($contactEmail) {
+                $validated['email'] = $contactEmail->email;
+            }
+            $validated['telephone'] = $contact->numeroTelephones()->first()?->numero_telephone;
+            $contactId = $contact->id;
         }
+
+        $clientRole = Role::where('nom', Role::CLIENT)->firstOrFail();
 
         $client = User::create([
             'nom' => $validated['nom'],
@@ -66,9 +75,13 @@ class ClientManagementController extends Controller
             'email' => $validated['email'],
             'password' => Hash::make($validated['password']),
             'telephone' => $validated['telephone'],
-            'role' => 'client',
-            'admin_user_id' => Auth::id(),
         ]);
+
+        // Set protected fields (not mass-assignable)
+        $client->role_id = $clientRole->id;
+        $client->admin_user_id = Auth::id();
+        $client->contact_id = $contactId;
+        $client->save();
 
         return redirect()->route('admin.clients.index')
             ->with('success', 'Client créé avec succès.');
@@ -84,12 +97,13 @@ class ClientManagementController extends Controller
             abort(403);
         }
 
-        $client->load('admin');
+        $client->load(['admin', 'role', 'contact']);
         
         // Get client's appointments
         $appointments = $client->visibleRendezVous()
             ->with(['contact', 'activite'])
-            ->orderBy('date_heure', 'desc')
+            ->orderBy('date_debut', 'desc')
+            ->orderBy('heure_debut', 'desc')
             ->paginate(10);
 
         return view('admin.clients.show', compact('client', 'appointments'));
@@ -105,7 +119,12 @@ class ClientManagementController extends Controller
             abort(403);
         }
 
-        return view('admin.clients.edit', compact('client'));
+        $contacts = Auth::user()->contacts()
+            ->orderBy('nom')
+            ->orderBy('prenom')
+            ->get();
+
+        return view('admin.clients.edit', compact('client', 'contacts'));
     }
 
     /**
@@ -124,7 +143,14 @@ class ClientManagementController extends Controller
             'email' => 'required|string|email|max:255|unique:users,email,' . $client->id,
             'telephone' => 'nullable|string|max:20',
             'password' => ['nullable', 'confirmed', Rules\Password::defaults()],
+            'contact_id' => 'nullable|exists:contacts,id',
         ]);
+
+        // Verify contact ownership if provided
+        if (isset($validated['contact_id']) && $validated['contact_id']) {
+            Contact::where('user_id', Auth::id())->findOrFail($validated['contact_id']);
+            $client->contact_id = $validated['contact_id'];
+        }
 
         $updateData = [
             'nom' => $validated['nom'],
@@ -138,6 +164,7 @@ class ClientManagementController extends Controller
         }
 
         $client->update($updateData);
+        $client->save();
 
         return redirect()->route('admin.clients.show', $client)
             ->with('success', 'Client mis à jour avec succès.');

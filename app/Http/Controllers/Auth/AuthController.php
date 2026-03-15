@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
 use App\Models\User;
+use App\Models\Role;
 use App\Mail\PasswordResetMail;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -91,12 +92,18 @@ class AuthController extends Controller
             'password' => 'required|string|min:8|confirmed',
         ]);
 
+        $adminRole = Role::where('nom', Role::ADMIN)->firstOrFail();
+
         $user = User::create([
             'nom' => $validated['nom'],
             'prenom' => $validated['prenom'],
             'email' => $validated['email'],
             'password' => Hash::make($validated['password']),
         ]);
+
+        // Entrepreneur gets admin role by default
+        $user->role_id = $adminRole->id;
+        $user->save();
 
         Auth::login($user);
 
