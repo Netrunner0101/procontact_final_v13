@@ -4,6 +4,7 @@ namespace App\Models;
 
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
@@ -32,12 +33,11 @@ class User extends Authenticatable
         'last_login_at',
         'password_reset_token',
         'password_reset_expires',
-        'role',
-        'admin_user_id',
         'google_id',
         'apple_id',
         'provider',
         'avatar',
+        'layout_preference',
     ];
 
     /**
@@ -66,6 +66,22 @@ class User extends Authenticatable
     }
 
     /**
+     * Get the role of the user.
+     */
+    public function role(): BelongsTo
+    {
+        return $this->belongsTo(Role::class);
+    }
+
+    /**
+     * Get the contact record linked to this client user.
+     */
+    public function contact(): BelongsTo
+    {
+        return $this->belongsTo(Contact::class);
+    }
+
+    /**
      * Get the contacts for the user.
      */
     public function contacts(): HasMany
@@ -88,15 +104,15 @@ class User extends Authenticatable
     {
         return $this->hasMany(RendezVous::class);
     }
-    
+
     /**
      * Get the admin user for this client.
      */
-    public function admin()
+    public function admin(): BelongsTo
     {
         return $this->belongsTo(User::class, 'admin_user_id');
     }
-    
+
     /**
      * Get the clients for this admin user.
      */
@@ -104,23 +120,23 @@ class User extends Authenticatable
     {
         return $this->hasMany(User::class, 'admin_user_id');
     }
-    
+
     /**
      * Check if user is an admin.
      */
     public function isAdmin(): bool
     {
-        return $this->role === 'admin';
+        return $this->role->nom === Role::ADMIN;
     }
-    
+
     /**
      * Check if user is a client.
      */
     public function isClient(): bool
     {
-        return $this->role === 'client';
+        return $this->role->nom === Role::CLIENT;
     }
-    
+
     /**
      * Get appointments visible to this user.
      */
@@ -129,10 +145,10 @@ class User extends Authenticatable
         if ($this->isAdmin()) {
             return $this->rendezVous();
         }
-        
-        // For clients, only show appointments where they are the contact
-        return RendezVous::whereHas('contact', function ($query) {
-            $query->where('email', $this->email);
-        });
+
+        // For clients, only show appointments linked to their contact record
+        // and belonging to their admin
+        return RendezVous::where('user_id', $this->admin_user_id)
+            ->where('contact_id', $this->contact_id);
     }
 }
