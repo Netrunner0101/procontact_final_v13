@@ -21,7 +21,6 @@ class Contact extends Model
         'ville',
         'code_postal',
         'pays',
-        'state_client',
         'status_id',
     ];
 

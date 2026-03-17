@@ -23,7 +23,6 @@ class ContactFactory extends Factory
             'ville' => $this->faker->city(),
             'code_postal' => $this->faker->postcode(),
             'pays' => 'France',
-            'state_client' => $this->faker->randomElement(['Actif', 'Inactif', 'Prospect']),
             'status_id' => Status::factory(),
         ];
     }

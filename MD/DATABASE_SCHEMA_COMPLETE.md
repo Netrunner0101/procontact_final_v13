@@ -55,7 +55,7 @@ L'application permet &agrave; un **admin** (entrepreneur/ind&eacute;pendant) de 
 | rue, numero         |-------->| status_client  |
 | ville, code_postal  |         +================+
 | pays                |
-| state_client        |
+| (removed)           |
 +=====================+
    |1          |1        \  N
    |           |          \
@@ -131,7 +131,7 @@ users (id, #role_id, nom, prenom, email, telephone, rue, numero_rue, ville,
 statuses (id, status_client, created_at, updated_at)
 
 contacts (id, #user_id, nom, prenom, rue, numero, ville, code_postal, pays,
-          state_client, #status_id, created_at, updated_at)
+          #status_id, created_at, updated_at)
 
 activites (id, #user_id, nom, description, numero_telephone, email, image,
            created_at, updated_at)
@@ -221,7 +221,6 @@ statistiques (id, #activite_id, #rendez_vous_id, #contact_id,
 | ville | varchar | NULL | Ville |
 | code_postal | varchar | NULL | Code postal |
 | pays | varchar | NULL | Pays |
-| state_client | varchar | NULL | &Eacute;tat du client |
 | status_id | bigint | FK &rarr; statuses.id, NULL, ON DELETE SET NULL | Statut du contact |
 | created_at | timestamp | | Horodatage cr&eacute;ation |
 | updated_at | timestamp | | Horodatage modification |
@@ -447,11 +446,11 @@ Une note est **toujours** li&eacute;e &agrave; un `rendez_vous_id` (NOT NULL). L
 #### 4. `users.contact_id` - Lien bidirectionnel
 Quand un admin cr&eacute;e un compte client pour un de ses contacts, `contact_id` permet de lier ce user-client &agrave; sa fiche contact chez l'admin. Le client ne voit alors que les RDV de cette fiche contact.
 
-#### 5. Redondance `state_client` vs `status_id`
-La table `contacts` a &agrave; la fois `state_client` (varchar libre) et `status_id` (FK vers `statuses`). C'est potentiellement redondant - un seul m&eacute;canisme de statut serait pr&eacute;f&eacute;rable.
+#### 5. ~~Redondance `state_client` vs `status_id`~~ CORRIG&Eacute;
+`state_client` a &eacute;t&eacute; supprim&eacute; de `contacts`. Seul `status_id` (FK vers `statuses`) subsiste comme m&eacute;canisme de statut.
 
-#### 6. `user_id` ajout&eacute; apr&egrave;s coup
-Les tables `notes`, `rappels`, `emails`, `numero_telephones` ont re&ccedil;u `user_id` via des migrations ult&eacute;rieures pour le multi-tenant. Ces colonnes sont potentiellement NULL sur les anciennes donn&eacute;es.
+#### 6. ~~`user_id` manquant dans emails/numero_telephones~~ CORRIG&Eacute;
+Les migrations vides pour `emails` et `numero_telephones` ont &eacute;t&eacute; compl&eacute;t&eacute;es avec ajout de `user_id` + backfill depuis `contacts.user_id`. Les 4 tables (`notes`, `rappels`, `emails`, `numero_telephones`) ont d&eacute;sormais un `user_id` NOT NULL avec FK et ON DELETE CASCADE.
 
 ---
 

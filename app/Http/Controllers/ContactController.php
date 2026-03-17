@@ -38,7 +38,6 @@ class ContactController extends Controller
             'ville' => 'nullable|string|max:255',
             'code_postal' => 'nullable|string|max:20',
             'pays' => 'nullable|string|max:255',
-            'state_client' => 'nullable|string|max:255',
             'status_id' => 'nullable|exists:statuses,id',
         ]);
 
@@ -84,7 +83,6 @@ class ContactController extends Controller
             'ville' => 'nullable|string|max:255',
             'code_postal' => 'nullable|string|max:20',
             'pays' => 'nullable|string|max:255',
-            'state_client' => 'nullable|string|max:255',
             'status_id' => 'nullable|exists:statuses,id',
         ]);
 
