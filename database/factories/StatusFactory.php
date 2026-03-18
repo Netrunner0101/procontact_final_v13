@@ -12,9 +12,7 @@ class StatusFactory extends Factory
     public function definition(): array
     {
         return [
-            'nom' => $this->faker->randomElement(['Prospect', 'Client actif', 'Client inactif', 'Lead qualifié']),
-            'description' => $this->faker->sentence(),
-            'couleur' => $this->faker->hexColor(),
+            'status_client' => $this->faker->randomElement(['Prospect', 'Client actif', 'Client inactif', 'Lead qualifié']),
         ];
     }
 }

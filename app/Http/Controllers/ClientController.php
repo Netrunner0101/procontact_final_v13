@@ -18,20 +18,22 @@ class ClientController extends Controller
         // Get appointments for this client
         $appointments = $user->visibleRendezVous()
             ->with(['contact', 'activite'])
-            ->orderBy('date_heure', 'desc')
+            ->orderBy('date_debut', 'desc')
+            ->orderBy('heure_debut', 'desc')
             ->paginate(10);
-        
+
         // Get upcoming appointments
         $upcomingAppointments = $user->visibleRendezVous()
             ->with(['contact', 'activite'])
-            ->where('date_heure', '>=', now())
-            ->orderBy('date_heure', 'asc')
+            ->where('date_debut', '>=', now()->toDateString())
+            ->orderBy('date_debut', 'asc')
+            ->orderBy('heure_debut', 'asc')
             ->limit(5)
             ->get();
-        
+
         // Get past appointments count
         $pastAppointmentsCount = $user->visibleRendezVous()
-            ->where('date_heure', '<', now())
+            ->where('date_debut', '<', now()->toDateString())
             ->count();
         
         // Get total appointments count
@@ -61,7 +63,7 @@ class ClientController extends Controller
             abort(403, 'Vous n\'avez pas accès à ce rendez-vous.');
         }
         
-        $rendezVous->load(['contact', 'activite', 'rappels']);
+        $rendezVous->load(['contact.emails', 'contact.numeroTelephones', 'activite', 'rappels', 'notes']);
         
         return view('client.appointment', compact('rendezVous'));
     }
@@ -80,17 +82,17 @@ class ClientController extends Controller
             $now = now();
             switch ($request->status) {
                 case 'upcoming':
-                    $query->where('date_heure', '>=', $now);
+                    $query->where('date_debut', '>=', $now->toDateString());
                     break;
                 case 'past':
-                    $query->where('date_heure', '<', $now);
+                    $query->where('date_debut', '<', $now->toDateString());
                     break;
                 case 'today':
-                    $query->whereDate('date_heure', $now->toDateString());
+                    $query->whereDate('date_debut', $now->toDateString());
                     break;
             }
         }
-        
+
         // Search functionality
         if ($request->has('search') && $request->search) {
             $search = $request->search;
@@ -102,8 +104,8 @@ class ClientController extends Controller
                   });
             });
         }
-        
-        $appointments = $query->orderBy('date_heure', 'desc')->paginate(15);
+
+        $appointments = $query->orderBy('date_debut', 'desc')->orderBy('heure_debut', 'desc')->paginate(15);
         
         return view('client.appointments', compact('appointments'));
     }

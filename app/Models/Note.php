@@ -11,10 +11,12 @@ class Note extends Model
     use HasFactory;
 
     protected $fillable = [
+        'user_id',
         'rendez_vous_id',
         'activite_id',
         'titre',
         'commentaire',
+        'is_shared_with_client',
         'date_create',
         'date_update',
     ];
@@ -22,6 +24,7 @@ class Note extends Model
     protected $casts = [
         'date_create' => 'datetime',
         'date_update' => 'datetime',
+        'is_shared_with_client' => 'boolean',
     ];
 
     /**
