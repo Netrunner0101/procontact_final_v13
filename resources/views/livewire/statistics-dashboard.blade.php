@@ -29,7 +29,7 @@
                 <option value="24">24 derniers mois</option>
             </select>
         </div>
-        
+
         <div class="control-group">
             <label for="selectedActivity" class="control-label">Activité spécifique</label>
             <select id="selectedActivity" wire:model.live="selectedActivity" class="control-select">
@@ -218,7 +218,7 @@
     align-items: center;
     margin-bottom: 2rem;
     padding: 2rem;
-    background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
+    background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
     border-radius: 1rem;
     color: white;
 }
@@ -250,6 +250,7 @@
     background: white;
     border-radius: 1rem;
     box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+    border: 1px solid #e2e8f0;
 }
 
 .control-group {
@@ -266,7 +267,7 @@
 
 .control-select {
     padding: 0.75rem 1rem;
-    border: 1px solid #d1d5db;
+    border: 1px solid #e2e8f0;
     border-radius: 0.5rem;
     background: white;
     min-width: 200px;
@@ -281,12 +282,13 @@
     border-radius: 1rem;
     box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
     overflow: hidden;
+    border: 1px solid #e2e8f0;
 }
 
 .chart-header {
     padding: 1.5rem;
-    border-bottom: 1px solid #e5e7eb;
-    background: #f9fafb;
+    border-bottom: 1px solid #f1f5f9;
+    background: #f8fafc;
 }
 
 .chart-title {
@@ -321,6 +323,7 @@
     border-radius: 1rem;
     box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
     overflow: hidden;
+    border: 1px solid #e2e8f0;
 }
 
 .stat-card.full-width {
@@ -329,8 +332,8 @@
 
 .stat-header {
     padding: 1.5rem;
-    border-bottom: 1px solid #e5e7eb;
-    background: #f9fafb;
+    border-bottom: 1px solid #f1f5f9;
+    background: #f8fafc;
 }
 
 .stat-title {
@@ -358,13 +361,13 @@
     justify-content: space-between;
     align-items: center;
     padding: 1rem;
-    border: 1px solid #e5e7eb;
+    border: 1px solid #f1f5f9;
     border-radius: 0.5rem;
     transition: all 0.2s ease;
 }
 
 .activity-item:hover, .status-item:hover, .priority-item:hover {
-    border-color: #f59e0b;
+    border-color: #06b6d4;
     box-shadow: 0 2px 4px -1px rgba(0, 0, 0, 0.1);
 }
 
@@ -388,7 +391,7 @@
     display: block;
     font-size: 1.5rem;
     font-weight: 700;
-    color: #f59e0b;
+    color: #06b6d4;
 }
 
 .stat-label {
@@ -405,17 +408,17 @@
     text-transform: uppercase;
 }
 
-.status-programmé { background: #dbeafe; color: #1e40af; }
-.status-confirmé { background: #d1fae5; color: #065f46; }
-.status-en-cours { background: #fef3c7; color: #d97706; }
-.status-terminé { background: #f3e8ff; color: #7c3aed; }
-.status-annulé { background: #fee2e2; color: #dc2626; }
+.status-programmé { background: #ecfeff; color: #0891b2; }
+.status-confirmé { background: #ecfdf5; color: #059669; }
+.status-en-cours { background: #fffbeb; color: #d97706; }
+.status-terminé { background: #f5f3ff; color: #7c3aed; }
+.status-annulé { background: #fff1f2; color: #e11d48; }
 .status-reporté { background: #f1f5f9; color: #475569; }
 
-.priority-basse { background: #f3f4f6; color: #374151; }
-.priority-normale { background: #dbeafe; color: #1e40af; }
-.priority-haute { background: #fef3c7; color: #d97706; }
-.priority-urgente { background: #fee2e2; color: #dc2626; }
+.priority-basse { background: #f1f5f9; color: #475569; }
+.priority-normale { background: #ecfeff; color: #0891b2; }
+.priority-haute { background: #fffbeb; color: #d97706; }
+.priority-urgente { background: #fff1f2; color: #e11d48; }
 
 .monthly-grid {
     display: grid;
@@ -425,7 +428,7 @@
 
 .monthly-item {
     padding: 1rem;
-    border: 1px solid #e5e7eb;
+    border: 1px solid #e2e8f0;
     border-radius: 0.5rem;
     text-align: center;
 }
@@ -474,22 +477,22 @@
 }
 
 .btn-primary {
-    background: #f59e0b;
+    background: #06b6d4;
     color: white;
 }
 
 .btn-primary:hover {
-    background: #d97706;
+    background: #0891b2;
 }
 
 .btn-secondary {
-    background: rgba(255, 255, 255, 0.2);
+    background: rgba(6, 182, 212, 0.15);
     color: white;
-    border: 1px solid rgba(255, 255, 255, 0.3);
+    border: 1px solid rgba(6, 182, 212, 0.3);
 }
 
 .btn-secondary:hover {
-    background: rgba(255, 255, 255, 0.3);
+    background: rgba(6, 182, 212, 0.25);
 }
 
 @media (max-width: 768px) {
@@ -498,25 +501,25 @@
         gap: 1rem;
         text-align: center;
     }
-    
+
     .header-actions {
         flex-direction: column;
         width: 100%;
     }
-    
+
     .controls-section {
         flex-direction: column;
         gap: 1rem;
     }
-    
+
     .stats-grid {
         grid-template-columns: 1fr;
     }
-    
+
     .monthly-grid {
         grid-template-columns: 1fr;
     }
-    
+
     .month-stats {
         flex-direction: column;
         gap: 1rem;
@@ -536,25 +539,25 @@ function initializeCharts() {
     if (monthlyCtx) {
         // Chart will be implemented with Chart.js
         const monthlyData = @json($monthlyStats);
-        
+
         // Placeholder for Chart.js implementation
         monthlyCtx.getContext('2d').fillText('Graphique des tendances mensuelles', 50, 100);
     }
-    
+
     // Status Distribution Chart
     const statusCtx = document.getElementById('statusChart');
     if (statusCtx) {
         const statusData = @json($statusDistribution);
-        
+
         // Placeholder for Chart.js implementation
         statusCtx.getContext('2d').fillText('Graphique des statuts', 50, 100);
     }
-    
+
     // Priority Distribution Chart
     const priorityCtx = document.getElementById('priorityChart');
     if (priorityCtx) {
         const priorityData = @json($priorityDistribution);
-        
+
         // Placeholder for Chart.js implementation
         priorityCtx.getContext('2d').fillText('Graphique des priorités', 50, 100);
     }

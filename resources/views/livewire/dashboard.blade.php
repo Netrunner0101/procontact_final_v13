@@ -1,576 +1,123 @@
-<div class="dashboard-container">
-    <!-- Header Section -->
-    <div class="dashboard-header">
-        <div class="welcome-section">
-            <h1 class="dashboard-title">
-                <i class="fas fa-tachometer-alt text-primary"></i>
-                Bonjour, {{ Auth::user()->prenom ?? Auth::user()->nom }}
-            </h1>
-            <p class="dashboard-subtitle">
-                @if($lastLogin)
-                    Dernière connexion: {{ $lastLogin->format('d/m/Y à H:i') }}
-                @else
-                    Bienvenue dans votre espace de gestion
-                @endif
-            </p>
-        </div>
-        <div class="dashboard-actions">
-            <button wire:click="refreshStats" class="btn btn-primary">
-                <i class="fas fa-sync-alt"></i> Actualiser
-            </button>
-        </div>
-    </div>
-
-    <!-- Statistics Cards -->
-    <div class="stats-grid">
-        <div class="stat-card gradient-blue" wire:click="$dispatch('navigate', {route: 'contacts.index'})">
-            <div class="stat-icon">
-                <i class="fas fa-users"></i>
-            </div>
-            <div class="stat-content">
-                <h3 class="stat-number">{{ $stats['contacts'] ?? 0 }}</h3>
-                <p class="stat-label">Contacts</p>
-            </div>
+<div>
+    {{-- Activity Dashboard - Ocean Breeze Theme --}}
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        <!-- Header -->
+        <div class="mb-8">
+            <h1 class="text-3xl font-bold" style="color: #0f172a;">Mes Activit&eacute;s</h1>
+            <p class="mt-2" style="color: #64748b;">S&eacute;lectionnez une activit&eacute; pour acc&eacute;der &agrave; tous vos contacts, rendez-vous et notes</p>
         </div>
 
-        <div class="stat-card gradient-green" wire:click="$dispatch('navigate', {route: 'rendez-vous.index'})">
-            <div class="stat-icon">
-                <i class="fas fa-calendar-alt"></i>
-            </div>
-            <div class="stat-content">
-                <h3 class="stat-number">{{ $stats['appointments'] ?? 0 }}</h3>
-                <p class="stat-label">Rendez-vous</p>
-            </div>
-        </div>
-
-        <div class="stat-card gradient-purple" wire:click="$dispatch('navigate', {route: 'notes.index'})">
-            <div class="stat-icon">
-                <i class="fas fa-sticky-note"></i>
-            </div>
-            <div class="stat-content">
-                <h3 class="stat-number">{{ $stats['notes'] ?? 0 }}</h3>
-                <p class="stat-label">Notes</p>
-            </div>
-        </div>
-
-        <div class="stat-card gradient-orange" wire:click="$dispatch('navigate', {route: 'rappels.index'})">
-            <div class="stat-icon">
-                <i class="fas fa-bell"></i>
-            </div>
-            <div class="stat-content">
-                <h3 class="stat-number">{{ $stats['reminders'] ?? 0 }}</h3>
-                <p class="stat-label">Rappels</p>
-            </div>
-        </div>
-
-        <div class="stat-card gradient-teal" wire:click="$dispatch('navigate', {route: 'activites.index'})">
-            <div class="stat-icon">
-                <i class="fas fa-briefcase"></i>
-            </div>
-            <div class="stat-content">
-                <h3 class="stat-number">{{ $stats['activities'] ?? 0 }}</h3>
-                <p class="stat-label">Activités</p>
-            </div>
-        </div>
-    </div>
-
-    <!-- Content Grid -->
-    <div class="dashboard-grid">
-        <!-- Upcoming Appointments -->
-        <div class="dashboard-card">
-            <div class="card-header">
-                <h3 class="card-title">
-                    <i class="fas fa-calendar-check text-green-500"></i>
-                    Prochains Rendez-vous
-                </h3>
-                <a href="{{ route('rendez-vous.create') }}" class="btn btn-sm btn-primary">
-                    <i class="fas fa-plus"></i> Nouveau
-                </a>
-            </div>
-            <div class="card-body">
-                @if($upcomingAppointments && count($upcomingAppointments) > 0)
-                    <div class="appointment-list">
-                        @foreach($upcomingAppointments as $appointment)
-                            <div class="appointment-item" wire:key="appointment-{{ $appointment->id }}">
-                                <div class="appointment-date">
-                                    <div class="date-day">{{ $appointment->date_heure->format('d') }}</div>
-                                    <div class="date-month">{{ $appointment->date_heure->format('M') }}</div>
+        <!-- Activities Grid -->
+        @if($activities->count() > 0)
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                @foreach($activities as $activity)
+                    <a href="{{ route('activites.view', $activity->id) }}"
+                       class="activity-card block rounded-2xl overflow-hidden group"
+                       wire:key="activity-{{ $activity->id }}"
+                       style="background: white; border: 1px solid #e2e8f0; box-shadow: 0 1px 3px rgba(15,23,42,0.06);">
+                        <!-- Card Header -->
+                        <div class="p-6" style="background: linear-gradient(135deg, #0f172a, #1e3a5f);">
+                            <div class="flex items-center justify-between">
+                                <div class="w-14 h-14 rounded-xl flex items-center justify-center" style="background: rgba(6,182,212,0.2); backdrop-filter: blur(8px);">
+                                    <svg class="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M21 13.255A23.931 23.931 0 0112 15c-3.183 0-6.22-.62-9-1.745M16 6V4a2 2 0 00-2-2h-4a2 2 0 00-2 2v2m4 6h.01M5 20h14a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"></path>
+                                    </svg>
                                 </div>
-                                <div class="appointment-details">
-                                    <h4 class="appointment-title">{{ $appointment->contact->nom }} {{ $appointment->contact->prenom }}</h4>
-                                    <p class="appointment-time">
-                                        <i class="fas fa-clock"></i> {{ $appointment->date_heure->format('H:i') }}
-                                    </p>
-                                    <p class="appointment-activity">
-                                        <i class="fas fa-briefcase"></i> {{ $appointment->activite->nom }}
-                                    </p>
-                                </div>
-                                <div class="appointment-actions">
-                                    <a href="{{ route('rendez-vous.show', $appointment) }}" class="btn btn-sm btn-outline">
-                                        <i class="fas fa-eye"></i>
-                                    </a>
+                                <div style="color: rgba(255,255,255,0.5);">
+                                    <svg class="w-5 h-5 transform group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
+                                    </svg>
                                 </div>
                             </div>
-                        @endforeach
-                    </div>
-                @else
-                    <div class="empty-state">
-                        <i class="fas fa-calendar-times text-gray-400"></i>
-                        <p>Aucun rendez-vous à venir</p>
-                    </div>
-                @endif
-            </div>
-        </div>
+                        </div>
 
-        <!-- Recent Contacts -->
-        <div class="dashboard-card">
-            <div class="card-header">
-                <h3 class="card-title">
-                    <i class="fas fa-user-plus text-blue-500"></i>
-                    Contacts Récents
-                </h3>
-                <a href="{{ route('contacts.create') }}" class="btn btn-sm btn-primary">
-                    <i class="fas fa-plus"></i> Nouveau
-                </a>
-            </div>
-            <div class="card-body">
-                @if($recentContacts && count($recentContacts) > 0)
-                    <div class="contact-list">
-                        @foreach($recentContacts as $contact)
-                            <div class="contact-item" wire:key="contact-{{ $contact->id }}">
-                                <div class="contact-avatar">
-                                    <i class="fas fa-user"></i>
+                        <!-- Card Content -->
+                        <div class="p-6">
+                            <h3 class="text-lg font-bold mb-1" style="color: #0f172a;">{{ $activity->nom }}</h3>
+
+                            @if($activity->description)
+                                <p class="text-sm mb-4 line-clamp-2" style="color: #64748b;">{{ $activity->description }}</p>
+                            @endif
+
+                            <!-- Stats -->
+                            <div class="grid grid-cols-2 gap-4 mt-4 pt-4" style="border-top: 1px solid #f1f5f9;">
+                                <div class="text-center">
+                                    <div class="text-2xl font-bold" style="color: #06b6d4;">{{ $activity->contacts->count() }}</div>
+                                    <div class="text-xs font-medium" style="color: #94a3b8;">Contacts</div>
                                 </div>
-                                <div class="contact-details">
-                                    <h4 class="contact-name">{{ $contact->nom }} {{ $contact->prenom }}</h4>
-                                    <p class="contact-info">
-                                        @if($contact->email)
-                                            <i class="fas fa-envelope"></i> {{ $contact->email }}
-                                        @endif
-                                    </p>
-                                    <p class="contact-date">
-                                        <i class="fas fa-calendar"></i> {{ $contact->created_at->format('d/m/Y') }}
-                                    </p>
-                                </div>
-                                <div class="contact-actions">
-                                    <a href="{{ route('contacts.show', $contact) }}" class="btn btn-sm btn-outline">
-                                        <i class="fas fa-eye"></i>
-                                    </a>
+                                <div class="text-center">
+                                    <div class="text-2xl font-bold" style="color: #10b981;">{{ $activity->rendezVous->count() }}</div>
+                                    <div class="text-xs font-medium" style="color: #94a3b8;">RDV</div>
                                 </div>
                             </div>
-                        @endforeach
-                    </div>
-                @else
-                    <div class="empty-state">
-                        <i class="fas fa-users text-gray-400"></i>
-                        <p>Aucun contact récent</p>
-                    </div>
-                @endif
-            </div>
-        </div>
 
-        <!-- Upcoming Reminders -->
-        <div class="dashboard-card">
-            <div class="card-header">
-                <h3 class="card-title">
-                    <i class="fas fa-bell text-orange-500"></i>
-                    Rappels à Venir
-                </h3>
-                <a href="{{ route('rappels.create') }}" class="btn btn-sm btn-primary">
-                    <i class="fas fa-plus"></i> Nouveau
+                            <!-- Date Info -->
+                            <div class="mt-4 pt-3" style="border-top: 1px solid #f1f5f9;">
+                                <p class="text-xs" style="color: #94a3b8;">
+                                    <i class="fas fa-calendar mr-1"></i>
+                                    Cr&eacute;&eacute; le {{ $activity->created_at->format('d/m/Y') }}
+                                </p>
+                            </div>
+                        </div>
+                    </a>
+                @endforeach
+            </div>
+        @else
+            <!-- Empty State -->
+            <div class="text-center py-16">
+                <div class="inline-flex items-center justify-center w-20 h-20 rounded-2xl mb-6" style="background: #ecfeff;">
+                    <svg class="w-10 h-10" style="color: #06b6d4;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M21 13.255A23.931 23.931 0 0112 15c-3.183 0-6.22-.62-9-1.745M16 6V4a2 2 0 00-2-2h-4a2 2 0 00-2 2v2m4 6h.01M5 20h14a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"></path>
+                    </svg>
+                </div>
+                <h3 class="text-lg font-semibold mb-2" style="color: #0f172a;">Aucune activit&eacute;</h3>
+                <p class="mb-6" style="color: #64748b;">Cr&eacute;ez votre premi&egrave;re activit&eacute; pour commencer</p>
+                <a href="{{ route('activites.create') }}" class="inline-flex items-center px-6 py-3 text-white font-semibold rounded-xl transition-all hover:shadow-lg" style="background: #06b6d4;">
+                    <i class="fas fa-plus mr-2"></i>
+                    Cr&eacute;er une activit&eacute;
                 </a>
             </div>
-            <div class="card-body">
-                @if($upcomingReminders && count($upcomingReminders) > 0)
-                    <div class="reminder-list">
-                        @foreach($upcomingReminders as $reminder)
-                            <div class="reminder-item" wire:key="reminder-{{ $reminder->id }}">
-                                <div class="reminder-status">
-                                    @php
-                                        $isToday = $reminder->date_rappel->isToday();
-                                        $isPast = $reminder->date_rappel->isPast();
-                                    @endphp
-                                    @if($isPast)
-                                        <span class="status-badge status-expired">Expiré</span>
-                                    @elseif($isToday)
-                                        <span class="status-badge status-today">Aujourd'hui</span>
-                                    @else
-                                        <span class="status-badge status-upcoming">À venir</span>
-                                    @endif
-                                </div>
-                                <div class="reminder-details">
-                                    <h4 class="reminder-title">{{ $reminder->titre }}</h4>
-                                    <p class="reminder-contact">
-                                        <i class="fas fa-user"></i> {{ $reminder->rendezVous->contact->nom }} {{ $reminder->rendezVous->contact->prenom }}
-                                    </p>
-                                    <p class="reminder-date">
-                                        <i class="fas fa-clock"></i> {{ $reminder->date_rappel->format('d/m/Y H:i') }}
-                                    </p>
-                                </div>
-                                <div class="reminder-actions">
-                                    <a href="{{ route('rappels.show', $reminder) }}" class="btn btn-sm btn-outline">
-                                        <i class="fas fa-eye"></i>
-                                    </a>
-                                </div>
-                            </div>
-                        @endforeach
-                    </div>
-                @else
-                    <div class="empty-state">
-                        <i class="fas fa-bell-slash text-gray-400"></i>
-                        <p>Aucun rappel à venir</p>
-                    </div>
-                @endif
+        @endif
+
+        <!-- Quick Stats Summary -->
+        @if($activities->count() > 0)
+            <div class="mt-10 grid grid-cols-2 md:grid-cols-4 gap-4">
+                <div class="rounded-xl p-5 text-center" style="background: white; border: 1px solid #e2e8f0;">
+                    <div class="text-3xl font-bold" style="color: #06b6d4;">{{ $stats['activities'] }}</div>
+                    <div class="text-sm font-medium mt-1" style="color: #64748b;">Activit&eacute;s</div>
+                </div>
+                <div class="rounded-xl p-5 text-center" style="background: white; border: 1px solid #e2e8f0;">
+                    <div class="text-3xl font-bold" style="color: #10b981;">{{ $stats['contacts'] }}</div>
+                    <div class="text-sm font-medium mt-1" style="color: #64748b;">Contacts Total</div>
+                </div>
+                <div class="rounded-xl p-5 text-center" style="background: white; border: 1px solid #e2e8f0;">
+                    <div class="text-3xl font-bold" style="color: #8b5cf6;">{{ $stats['appointments'] }}</div>
+                    <div class="text-sm font-medium mt-1" style="color: #64748b;">RDV Total</div>
+                </div>
+                <div class="rounded-xl p-5 text-center" style="background: white; border: 1px solid #e2e8f0;">
+                    <div class="text-3xl font-bold" style="color: #f59e0b;">{{ $stats['notes'] }}</div>
+                    <div class="text-sm font-medium mt-1" style="color: #64748b;">Notes Total</div>
+                </div>
             </div>
-        </div>
+        @endif
     </div>
 
-    <!-- Quick Actions -->
-    <div class="quick-actions">
-        <h3 class="section-title">
-            <i class="fas fa-bolt"></i> Actions Rapides
-        </h3>
-        <div class="action-grid">
-            <a href="{{ route('contacts.create') }}" class="action-card">
-                <div class="action-icon gradient-blue">
-                    <i class="fas fa-user-plus"></i>
-                </div>
-                <div class="action-content">
-                    <h4>Nouveau Contact</h4>
-                    <p>Ajouter un contact</p>
-                </div>
-            </a>
-            
-            <a href="{{ route('rendez-vous.create') }}" class="action-card">
-                <div class="action-icon gradient-green">
-                    <i class="fas fa-calendar-plus"></i>
-                </div>
-                <div class="action-content">
-                    <h4>Nouveau RDV</h4>
-                    <p>Planifier un rendez-vous</p>
-                </div>
-            </a>
-            
-            <a href="{{ route('activites.create') }}" class="action-card">
-                <div class="action-icon gradient-purple">
-                    <i class="fas fa-briefcase"></i>
-                </div>
-                <div class="action-content">
-                    <h4>Nouvelle Activité</h4>
-                    <p>Créer une activité</p>
-                </div>
-            </a>
-            
-            <a href="{{ route('statistiques.index') }}" class="action-card">
-                <div class="action-icon gradient-orange">
-                    <i class="fas fa-chart-bar"></i>
-                </div>
-                <div class="action-content">
-                    <h4>Statistiques</h4>
-                    <p>Voir les rapports</p>
-                </div>
-            </a>
-        </div>
-    </div>
+    <style>
+        .line-clamp-2 {
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+        }
 
-<style>
-.dashboard-container {
-    padding: 1.5rem;
-    max-width: 1400px;
-    margin: 0 auto;
-}
+        .activity-card {
+            transition: all 0.2s ease;
+        }
 
-.dashboard-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 2rem;
-    padding: 1.5rem;
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-    border-radius: 1rem;
-    color: white;
-}
-
-.dashboard-title {
-    font-size: 2rem;
-    font-weight: 700;
-    margin: 0;
-    display: flex;
-    align-items: center;
-    gap: 0.75rem;
-}
-
-.dashboard-subtitle {
-    margin: 0.5rem 0 0 0;
-    opacity: 0.9;
-    font-size: 1rem;
-}
-
-.stats-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-    gap: 1.5rem;
-    margin-bottom: 2rem;
-}
-
-.stat-card {
-    padding: 1.5rem;
-    border-radius: 1rem;
-    color: white;
-    cursor: pointer;
-    transition: all 0.3s ease;
-    display: flex;
-    align-items: center;
-    gap: 1rem;
-    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
-}
-
-.stat-card:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 10px 25px -3px rgba(0, 0, 0, 0.1);
-}
-
-.gradient-blue { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); }
-.gradient-green { background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%); }
-.gradient-purple { background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%); }
-.gradient-orange { background: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%); }
-.gradient-teal { background: linear-gradient(135deg, #fa709a 0%, #fee140 100%); }
-
-.stat-icon {
-    font-size: 2rem;
-    opacity: 0.9;
-}
-
-.stat-number {
-    font-size: 2.5rem;
-    font-weight: 700;
-    margin: 0;
-    line-height: 1;
-}
-
-.stat-label {
-    margin: 0.25rem 0 0 0;
-    opacity: 0.9;
-    font-size: 0.9rem;
-}
-
-.dashboard-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
-    gap: 1.5rem;
-    margin-bottom: 2rem;
-}
-
-.dashboard-card {
-    background: white;
-    border-radius: 1rem;
-    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
-    overflow: hidden;
-}
-
-.card-header {
-    padding: 1.5rem;
-    border-bottom: 1px solid #e5e7eb;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    background: #f9fafb;
-}
-
-.card-title {
-    margin: 0;
-    font-size: 1.25rem;
-    font-weight: 600;
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
-}
-
-.card-body {
-    padding: 1.5rem;
-    max-height: 400px;
-    overflow-y: auto;
-}
-
-.appointment-list, .contact-list, .reminder-list {
-    display: flex;
-    flex-direction: column;
-    gap: 1rem;
-}
-
-.appointment-item, .contact-item, .reminder-item {
-    display: flex;
-    align-items: center;
-    gap: 1rem;
-    padding: 1rem;
-    border: 1px solid #e5e7eb;
-    border-radius: 0.5rem;
-    transition: all 0.2s ease;
-}
-
-.appointment-item:hover, .contact-item:hover, .reminder-item:hover {
-    border-color: #3b82f6;
-    box-shadow: 0 2px 4px -1px rgba(0, 0, 0, 0.1);
-}
-
-.appointment-date {
-    text-align: center;
-    min-width: 60px;
-}
-
-.date-day {
-    font-size: 1.5rem;
-    font-weight: 700;
-    color: #3b82f6;
-}
-
-.date-month {
-    font-size: 0.75rem;
-    text-transform: uppercase;
-    color: #6b7280;
-}
-
-.appointment-details, .contact-details, .reminder-details {
-    flex: 1;
-}
-
-.appointment-title, .contact-name, .reminder-title {
-    margin: 0 0 0.25rem 0;
-    font-weight: 600;
-    color: #1f2937;
-}
-
-.appointment-time, .appointment-activity, .contact-info, .contact-date, .reminder-contact, .reminder-date {
-    margin: 0.25rem 0;
-    font-size: 0.875rem;
-    color: #6b7280;
-    display: flex;
-    align-items: center;
-    gap: 0.25rem;
-}
-
-.contact-avatar {
-    width: 40px;
-    height: 40px;
-    border-radius: 50%;
-    background: #e5e7eb;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    color: #6b7280;
-}
-
-.status-badge {
-    padding: 0.25rem 0.75rem;
-    border-radius: 9999px;
-    font-size: 0.75rem;
-    font-weight: 600;
-    text-transform: uppercase;
-}
-
-.status-expired { background: #fee2e2; color: #dc2626; }
-.status-today { background: #fef3c7; color: #d97706; }
-.status-upcoming { background: #dbeafe; color: #2563eb; }
-
-.empty-state {
-    text-align: center;
-    padding: 2rem;
-    color: #6b7280;
-}
-
-.empty-state i {
-    font-size: 3rem;
-    margin-bottom: 1rem;
-}
-
-.quick-actions {
-    margin-top: 2rem;
-}
-
-.section-title {
-    font-size: 1.5rem;
-    font-weight: 600;
-    margin-bottom: 1rem;
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
-    color: #1f2937;
-}
-
-.action-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-    gap: 1rem;
-}
-
-.action-card {
-    display: flex;
-    align-items: center;
-    gap: 1rem;
-    padding: 1.5rem;
-    background: white;
-    border-radius: 0.75rem;
-    box-shadow: 0 2px 4px -1px rgba(0, 0, 0, 0.1);
-    transition: all 0.2s ease;
-    text-decoration: none;
-    color: inherit;
-}
-
-.action-card:hover {
-    transform: translateY(-1px);
-    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
-}
-
-.action-icon {
-    width: 60px;
-    height: 60px;
-    border-radius: 1rem;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    color: white;
-    font-size: 1.5rem;
-}
-
-.action-content h4 {
-    margin: 0 0 0.25rem 0;
-    font-weight: 600;
-    color: #1f2937;
-}
-
-.action-content p {
-    margin: 0;
-    font-size: 0.875rem;
-    color: #6b7280;
-}
-
-@media (max-width: 768px) {
-    .dashboard-header {
-        flex-direction: column;
-        gap: 1rem;
-        text-align: center;
-    }
-    
-    .dashboard-grid {
-        grid-template-columns: 1fr;
-    }
-    
-    .stats-grid {
-        grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
-    }
-    
-    .action-grid {
-        grid-template-columns: 1fr;
-    }
-}
-</style>
-
-<script>
-    document.addEventListener('livewire:navigated', () => {
-        // Handle navigation events
-        Livewire.on('navigate', (event) => {
-            window.location.href = route(event.route);
-        });
-    });
-</script>
+        .activity-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 20px 25px -5px rgba(15,23,42,0.08), 0 8px 10px -6px rgba(15,23,42,0.04) !important;
+            border-color: #06b6d4 !important;
+        }
+    </style>
 </div>

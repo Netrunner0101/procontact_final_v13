@@ -28,15 +28,15 @@
         <div class="search-box">
             <div class="search-input-group">
                 <i class="fas fa-search"></i>
-                <input 
-                    type="text" 
-                    wire:model.live="search" 
+                <input
+                    type="text"
+                    wire:model.live="search"
                     placeholder="Rechercher par nom de contact..."
                     class="search-input"
                 >
             </div>
         </div>
-        
+
         <div class="filter-controls">
             <select wire:model.live="statusFilter" class="filter-select">
                 <option value="">Tous les statuts</option>
@@ -47,21 +47,21 @@
                 <option value="Annulé">Annulé</option>
                 <option value="Reporté">Reporté</option>
             </select>
-            
+
             <select wire:model.live="contactFilter" class="filter-select">
                 <option value="">Tous les contacts</option>
                 @foreach($contacts as $contact)
                     <option value="{{ $contact->id }}">{{ $contact->nom }} {{ $contact->prenom }}</option>
                 @endforeach
             </select>
-            
+
             <select wire:model.live="activiteFilter" class="filter-select">
                 <option value="">Toutes les activités</option>
                 @foreach($activites as $activite)
                     <option value="{{ $activite->id }}">{{ $activite->nom }}</option>
                 @endforeach
             </select>
-            
+
             <select wire:model.live="dateFilter" class="filter-select">
                 <option value="">Toutes les dates</option>
                 <option value="today">Aujourd'hui</option>
@@ -89,59 +89,42 @@
                     <div class="appointment-header">
                         <div class="appointment-date-time">
                             <div class="date-display">
-                                <div class="date-day">{{ $appointment->date_heure->format('d') }}</div>
-                                <div class="date-month">{{ $appointment->date_heure->format('M') }}</div>
-                                <div class="date-year">{{ $appointment->date_heure->format('Y') }}</div>
+                                <div class="date-day">{{ $appointment->date_debut?->format('d') ?? '-' }}</div>
+                                <div class="date-month">{{ $appointment->date_debut?->format('M') ?? '-' }}</div>
+                                <div class="date-year">{{ $appointment->date_debut?->format('Y') ?? '-' }}</div>
                             </div>
                             <div class="time-display">
                                 <i class="fas fa-clock"></i>
-                                {{ $appointment->date_heure->format('H:i') }}
-                                <span class="duration">({{ $appointment->duree }}min)</span>
-                            </div>
-                        </div>
-                        
-                        <div class="appointment-status">
-                            <div class="status-dropdown">
-                                <select wire:change="updateStatus({{ $appointment->id }}, $event.target.value)" 
-                                        class="status-select status-{{ strtolower(str_replace(' ', '-', $appointment->statut)) }}">
-                                    <option value="Programmé" {{ $appointment->statut === 'Programmé' ? 'selected' : '' }}>Programmé</option>
-                                    <option value="Confirmé" {{ $appointment->statut === 'Confirmé' ? 'selected' : '' }}>Confirmé</option>
-                                    <option value="En cours" {{ $appointment->statut === 'En cours' ? 'selected' : '' }}>En cours</option>
-                                    <option value="Terminé" {{ $appointment->statut === 'Terminé' ? 'selected' : '' }}>Terminé</option>
-                                    <option value="Annulé" {{ $appointment->statut === 'Annulé' ? 'selected' : '' }}>Annulé</option>
-                                    <option value="Reporté" {{ $appointment->statut === 'Reporté' ? 'selected' : '' }}>Reporté</option>
-                                </select>
+                                {{ $appointment->heure_debut ?? '-' }} - {{ $appointment->heure_fin ?? '-' }}
                             </div>
                         </div>
                     </div>
-                    
+
                     <div class="appointment-content">
                         <div class="appointment-info">
-                            <h3 class="contact-name">
-                                <i class="fas fa-user"></i>
-                                {{ $appointment->contact->nom }} {{ $appointment->contact->prenom }}
+                            <h3 class="appointment-title">
+                                <i class="fas fa-calendar-check"></i>
+                                {{ $appointment->titre }}
                             </h3>
-                            
+
+                            <p class="contact-name">
+                                <i class="fas fa-user"></i>
+                                {{ $appointment->contact->nom ?? 'N/A' }} {{ $appointment->contact->prenom ?? '' }}
+                            </p>
+
                             <p class="activity-name">
                                 <i class="fas fa-briefcase"></i>
-                                {{ $appointment->activite->nom }}
+                                {{ $appointment->activite->nom ?? 'N/A' }}
                             </p>
-                            
-                            @if($appointment->lieu)
-                                <p class="appointment-location">
-                                    <i class="fas fa-map-marker-alt"></i>
-                                    {{ $appointment->lieu }}
-                                </p>
-                            @endif
-                            
-                            @if($appointment->notes)
+
+                            @if($appointment->description)
                                 <p class="appointment-notes">
                                     <i class="fas fa-sticky-note"></i>
-                                    {{ Str::limit($appointment->notes, 100) }}
+                                    {{ Str::limit($appointment->description, 100) }}
                                 </p>
                             @endif
                         </div>
-                        
+
                         <div class="appointment-actions">
                             <button wire:click="openEditModal({{ $appointment->id }})" class="action-btn edit-btn" title="Modifier">
                                 <i class="fas fa-edit"></i>
@@ -202,7 +185,7 @@
                         <i class="fas fa-times"></i>
                     </button>
                 </div>
-                
+
                 <form wire:submit.prevent="{{ $showCreateModal ? 'createAppointment' : 'updateAppointment' }}" class="modal-form">
                     <div class="form-grid">
                         <div class="form-group">
@@ -215,7 +198,7 @@
                             </select>
                             @error('contact_id') <span class="error-message">{{ $message }}</span> @enderror
                         </div>
-                        
+
                         <div class="form-group">
                             <label for="activite_id" class="form-label">Activité *</label>
                             <select id="activite_id" wire:model="activite_id" class="form-select" required>
@@ -226,19 +209,19 @@
                             </select>
                             @error('activite_id') <span class="error-message">{{ $message }}</span> @enderror
                         </div>
-                        
+
                         <div class="form-group">
                             <label for="date_heure" class="form-label">Date et Heure *</label>
                             <input type="datetime-local" id="date_heure" wire:model="date_heure" class="form-input" required>
                             @error('date_heure') <span class="error-message">{{ $message }}</span> @enderror
                         </div>
-                        
+
                         <div class="form-group">
                             <label for="duree" class="form-label">Durée (minutes) *</label>
                             <input type="number" id="duree" wire:model="duree" class="form-input" min="15" max="480" required>
                             @error('duree') <span class="error-message">{{ $message }}</span> @enderror
                         </div>
-                        
+
                         <div class="form-group">
                             <label for="statut" class="form-label">Statut *</label>
                             <select id="statut" wire:model="statut" class="form-select" required>
@@ -251,20 +234,20 @@
                             </select>
                             @error('statut') <span class="error-message">{{ $message }}</span> @enderror
                         </div>
-                        
+
                         <div class="form-group">
                             <label for="lieu" class="form-label">Lieu</label>
                             <input type="text" id="lieu" wire:model="lieu" class="form-input">
                             @error('lieu') <span class="error-message">{{ $message }}</span> @enderror
                         </div>
-                        
+
                         <div class="form-group full-width">
                             <label for="notes" class="form-label">Notes</label>
                             <textarea id="notes" wire:model="notes" class="form-textarea" rows="3"></textarea>
                             @error('notes') <span class="error-message">{{ $message }}</span> @enderror
                         </div>
                     </div>
-                    
+
                     <div class="modal-actions">
                         <button type="button" wire:click="closeModals" class="btn btn-secondary">
                             Annuler
@@ -292,12 +275,12 @@
                         <i class="fas fa-times"></i>
                     </button>
                 </div>
-                
+
                 <div class="modal-body">
                     <p>Êtes-vous sûr de vouloir supprimer le rendez-vous avec <strong>{{ $selectedAppointment->contact->nom }} {{ $selectedAppointment->contact->prenom }}</strong> ?</p>
                     <p class="text-sm text-gray-600">Cette action est irréversible.</p>
                 </div>
-                
+
                 <div class="modal-actions">
                     <button wire:click="closeModals" class="btn btn-secondary">
                         Annuler
@@ -312,7 +295,7 @@
     @endif
 
     <style>
-/* Reuse styles from contact-manager with appointment-specific additions */
+/* Ocean Breeze theme - appointment manager */
 .appointment-manager {
     padding: 1.5rem;
     max-width: 1400px;
@@ -325,7 +308,7 @@
     align-items: center;
     margin-bottom: 2rem;
     padding: 2rem;
-    background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+    background: linear-gradient(135deg, #0f172a 0%, #0e4d73 100%);
     border-radius: 1rem;
     color: white;
 }
@@ -399,7 +382,7 @@
 .search-input {
     width: 100%;
     padding: 0.75rem 1rem 0.75rem 2.5rem;
-    border: 1px solid #d1d5db;
+    border: 1px solid #e2e8f0;
     border-radius: 0.5rem;
     font-size: 1rem;
 }
@@ -413,7 +396,7 @@
 
 .filter-select {
     padding: 0.75rem 1rem;
-    border: 1px solid #d1d5db;
+    border: 1px solid #e2e8f0;
     border-radius: 0.5rem;
     background: white;
     min-width: 150px;
@@ -445,6 +428,7 @@
     background: white;
     border-radius: 1rem;
     box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+    border: 1px solid #e2e8f0;
     overflow: hidden;
     transition: all 0.3s ease;
 }
@@ -460,7 +444,7 @@
     align-items: center;
     padding: 1.5rem;
     background: #f8fafc;
-    border-bottom: 1px solid #e5e7eb;
+    border-bottom: 1px solid #f1f5f9;
 }
 
 .appointment-date-time {
@@ -477,7 +461,7 @@
 .date-day {
     font-size: 1.5rem;
     font-weight: 700;
-    color: #10b981;
+    color: #06b6d4;
 }
 
 .date-month, .date-year {
@@ -514,11 +498,11 @@
     cursor: pointer;
 }
 
-.status-programmé { background: #dbeafe; color: #1e40af; }
-.status-confirmé { background: #d1fae5; color: #065f46; }
-.status-en-cours { background: #fef3c7; color: #d97706; }
-.status-terminé { background: #f3e8ff; color: #7c3aed; }
-.status-annulé { background: #fee2e2; color: #dc2626; }
+.status-programmé { background: #ecfeff; color: #0891b2; }
+.status-confirmé { background: #ecfdf5; color: #059669; }
+.status-en-cours { background: #fffbeb; color: #d97706; }
+.status-terminé { background: #f5f3ff; color: #7c3aed; }
+.status-annulé { background: #fff1f2; color: #e11d48; }
 .status-reporté { background: #f1f5f9; color: #475569; }
 
 .appointment-content {
@@ -581,13 +565,13 @@
 }
 
 .view-btn {
-    background: #dbeafe;
-    color: #2563eb;
+    background: #ecfeff;
+    color: #0891b2;
     text-decoration: none;
 }
 
 .view-btn:hover {
-    background: #3b82f6;
+    background: #06b6d4;
     color: white;
 }
 
@@ -644,7 +628,7 @@
     color: #374151;
 }
 
-/* Modal styles (reuse from contact-manager) */
+/* Modal styles */
 .modal-overlay {
     position: fixed;
     top: 0;
@@ -662,6 +646,7 @@
 .modal-content {
     background: white;
     border-radius: 1rem;
+    border: 1px solid #e2e8f0;
     max-width: 800px;
     width: 100%;
     max-height: 90vh;
@@ -674,7 +659,7 @@
 
 .modal-header {
     padding: 1.5rem;
-    border-bottom: 1px solid #e5e7eb;
+    border-bottom: 1px solid #f1f5f9;
     display: flex;
     justify-content: space-between;
     align-items: center;
@@ -741,8 +726,8 @@
 
 .form-input:focus, .form-select:focus, .form-textarea:focus {
     outline: none;
-    border-color: #10b981;
-    box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.1);
+    border-color: #06b6d4;
+    box-shadow: 0 0 0 3px rgba(6, 182, 212, 0.1);
 }
 
 .error-message {
@@ -753,7 +738,7 @@
 
 .modal-actions {
     padding: 1.5rem;
-    border-top: 1px solid #e5e7eb;
+    border-top: 1px solid #f1f5f9;
     display: flex;
     gap: 1rem;
     justify-content: flex-end;
@@ -773,12 +758,12 @@
 }
 
 .btn-primary {
-    background: #10b981;
+    background: #06b6d4;
     color: white;
 }
 
 .btn-primary:hover {
-    background: #059669;
+    background: #0891b2;
 }
 
 .btn-secondary {
@@ -806,38 +791,38 @@
         gap: 1rem;
         text-align: center;
     }
-    
+
     .header-actions {
         flex-direction: column;
         width: 100%;
     }
-    
+
     .filters-section {
         flex-direction: column;
     }
-    
+
     .filter-controls {
         flex-wrap: wrap;
     }
-    
+
     .appointments-grid {
         grid-template-columns: 1fr;
     }
-    
+
     .form-grid {
         grid-template-columns: 1fr;
     }
-    
+
     .appointment-header {
         flex-direction: column;
         gap: 1rem;
     }
-    
+
     .appointment-content {
         flex-direction: column;
         gap: 1rem;
     }
-    
+
     .appointment-actions {
         margin-left: 0;
         justify-content: center;
