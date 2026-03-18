@@ -38,6 +38,8 @@ class User extends Authenticatable
         'provider',
         'avatar',
         'layout_preference',
+        'role_id',
+        'contact_id',
     ];
 
     /**

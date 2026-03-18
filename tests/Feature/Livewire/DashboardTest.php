@@ -24,7 +24,7 @@ class DashboardTest extends TestCase
         parent::setUp();
         
         $this->user = User::factory()->create([
-            'role' => 'admin'
+            'role_id' => 1
         ]);
     }
 

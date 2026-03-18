@@ -26,11 +26,11 @@ class LivewireComponentTest extends TestCase
         parent::setUp();
         
         $this->user = User::factory()->create([
-            'role' => 'admin'
+            'role_id' => 1
         ]);
         
         $this->status = Status::factory()->create([
-            'nom' => 'Prospect'
+            'status_client' => 'Prospect'
         ]);
     }
 
