@@ -16,9 +16,8 @@ class ActiviteFactory extends Factory
             'user_id' => User::factory(),
             'nom' => $this->faker->words(2, true),
             'description' => $this->faker->paragraph(),
-            'duree_defaut' => $this->faker->numberBetween(30, 120),
-            'prix' => $this->faker->randomFloat(2, 50, 500),
-            'couleur' => $this->faker->hexColor(),
+            'numero_telephone' => $this->faker->phoneNumber(),
+            'email' => $this->faker->safeEmail(),
         ];
     }
 }

@@ -82,11 +82,11 @@
                     </div>
                     @endif
                     
-                    @if($rendezVous->contact->numerosTelephone->count() > 0)
+                    @if($rendezVous->contact->numeroTelephones->count() > 0)
                     <div>
                         <label class="block text-sm font-medium text-gray-700">Téléphone</label>
                         <div class="mt-1 space-y-1">
-                            @foreach($rendezVous->contact->numerosTelephone as $numero)
+                            @foreach($rendezVous->contact->numeroTelephones as $numero)
                             <p class="text-sm text-gray-900">
                                 <a href="tel:{{ $numero->numero }}" class="text-blue-600 hover:text-blue-800">
                                     {{ $numero->numero }}
@@ -172,8 +172,8 @@
                     </a>
                     @endif
                     
-                    @if($rendezVous->contact && $rendezVous->contact->numerosTelephone->count() > 0)
-                    <a href="tel:{{ $rendezVous->contact->numerosTelephone->first()->numero }}" 
+                    @if($rendezVous->contact && $rendezVous->contact->numeroTelephones->count() > 0)
+                    <a href="tel:{{ $rendezVous->contact->numeroTelephones->first()->numero }}" 
                        class="block w-full bg-green-600 hover:bg-green-700 text-white text-center px-4 py-2 rounded transition duration-200">
                         Appeler
                     </a>

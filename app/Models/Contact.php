@@ -23,6 +23,7 @@ class Contact extends Model
         'pays',
         'state_client',
         'status_id',
+        'portal_token',
     ];
 
     /**
