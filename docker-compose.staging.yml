@@ -1,0 +1,35 @@
+services:
+  app:
+    image: ghcr.io/netrunner0101/procontact_final_v13:staging
+    restart: unless-stopped
+    env_file: .env
+    ports:
+      - "8082:80"
+    depends_on:
+      db:
+        condition: service_healthy
+    networks:
+      - procontact-staging
+
+  db:
+    image: postgres:16-alpine
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: procontact_staging
+      POSTGRES_USER: procontact
+      POSTGRES_PASSWORD: ${DB_PASSWORD:-secret}
+    volumes:
+      - pgdata-staging:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U procontact -d procontact_staging"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - procontact-staging
+
+volumes:
+  pgdata-staging:
+
+networks:
+  procontact-staging:
