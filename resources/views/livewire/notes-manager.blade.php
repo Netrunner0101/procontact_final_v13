@@ -20,15 +20,15 @@
         <div class="search-box">
             <div class="search-input-group">
                 <i class="fas fa-search"></i>
-                <input 
-                    type="text" 
-                    wire:model.live="search" 
+                <input
+                    type="text"
+                    wire:model.live="search"
                     placeholder="Rechercher par titre, contenu ou contact..."
                     class="search-input"
                 >
             </div>
         </div>
-        
+
         <div class="filter-controls">
             <select wire:model.live="priorityFilter" class="filter-select">
                 <option value="">Toutes les priorités</option>
@@ -37,7 +37,7 @@
                 <option value="Haute">Haute</option>
                 <option value="Urgente">Urgente</option>
             </select>
-            
+
             <select wire:model.live="appointmentFilter" class="filter-select">
                 <option value="">Tous les rendez-vous</option>
                 @foreach($appointments as $appointment)
@@ -46,16 +46,16 @@
                     </option>
                 @endforeach
             </select>
-            
+
             <div class="sort-controls">
                 <button wire:click="sortBy('created_at')" class="sort-btn {{ $sortBy === 'created_at' ? 'active' : '' }}">
-                    Date 
+                    Date
                     @if($sortBy === 'created_at')
                         <i class="fas fa-sort-{{ $sortDirection === 'asc' ? 'up' : 'down' }}"></i>
                     @endif
                 </button>
                 <button wire:click="sortBy('priorite')" class="sort-btn {{ $sortBy === 'priorite' ? 'active' : '' }}">
-                    Priorité 
+                    Priorité
                     @if($sortBy === 'priorite')
                         <i class="fas fa-sort-{{ $sortDirection === 'asc' ? 'up' : 'down' }}"></i>
                     @endif
@@ -91,25 +91,25 @@
                         </button>
                     </div>
                 </div>
-                
+
                 <div class="note-content">
                     <h3 class="note-title">{{ $note->titre }}</h3>
-                    
+
                     <div class="note-appointment">
                         <i class="fas fa-calendar"></i>
                         <span>{{ $note->rendezVous->contact->nom }} {{ $note->rendezVous->contact->prenom }}</span>
                         <span class="appointment-date">{{ $note->rendezVous->date_heure->format('d/m/Y H:i') }}</span>
                     </div>
-                    
+
                     <div class="note-activity">
                         <i class="fas fa-briefcase"></i>
                         <span>{{ $note->rendezVous->activite->nom }}</span>
                     </div>
-                    
+
                     <div class="note-text">
                         {{ Str::limit($note->contenu, 150) }}
                     </div>
-                    
+
                     <div class="note-footer">
                         <span class="note-date">
                             <i class="fas fa-clock"></i>
@@ -150,7 +150,7 @@
                         <i class="fas fa-times"></i>
                     </button>
                 </div>
-                
+
                 <form wire:submit.prevent="{{ $showCreateModal ? 'createNote' : 'updateNote' }}" class="modal-form">
                     <div class="form-grid">
                         <div class="form-group">
@@ -159,15 +159,15 @@
                                 <option value="">Sélectionner un rendez-vous</option>
                                 @foreach($appointments as $appointment)
                                     <option value="{{ $appointment->id }}">
-                                        {{ $appointment->contact->nom }} {{ $appointment->contact->prenom }} - 
-                                        {{ $appointment->date_heure->format('d/m/Y H:i') }} - 
+                                        {{ $appointment->contact->nom }} {{ $appointment->contact->prenom }} -
+                                        {{ $appointment->date_heure->format('d/m/Y H:i') }} -
                                         {{ $appointment->activite->nom }}
                                     </option>
                                 @endforeach
                             </select>
                             @error('rendez_vous_id') <span class="error-message">{{ $message }}</span> @enderror
                         </div>
-                        
+
                         <div class="form-group">
                             <label for="priorite" class="form-label">Priorité *</label>
                             <select id="priorite" wire:model="priorite" class="form-select" required>
@@ -178,20 +178,20 @@
                             </select>
                             @error('priorite') <span class="error-message">{{ $message }}</span> @enderror
                         </div>
-                        
+
                         <div class="form-group full-width">
                             <label for="titre" class="form-label">Titre *</label>
                             <input type="text" id="titre" wire:model="titre" class="form-input" required>
                             @error('titre') <span class="error-message">{{ $message }}</span> @enderror
                         </div>
-                        
+
                         <div class="form-group full-width">
                             <label for="contenu" class="form-label">Contenu *</label>
                             <textarea id="contenu" wire:model="contenu" class="form-textarea" rows="6" required></textarea>
                             @error('contenu') <span class="error-message">{{ $message }}</span> @enderror
                         </div>
                     </div>
-                    
+
                     <div class="modal-actions">
                         <button type="button" wire:click="closeModals" class="btn btn-secondary">
                             Annuler
@@ -219,12 +219,12 @@
                         <i class="fas fa-times"></i>
                     </button>
                 </div>
-                
+
                 <div class="modal-body">
                     <p>Êtes-vous sûr de vouloir supprimer la note <strong>{{ $selectedNote->titre }}</strong> ?</p>
                     <p class="text-sm text-gray-600">Cette action est irréversible.</p>
                 </div>
-                
+
                 <div class="modal-actions">
                     <button wire:click="closeModals" class="btn btn-secondary">
                         Annuler
@@ -237,10 +237,9 @@
             </div>
         </div>
     @endif
-</div>
 
-<style>
-.notes-manager {
+    <style>
+    .notes-manager {
     padding: 1.5rem;
     max-width: 1400px;
     margin: 0 auto;
@@ -252,7 +251,7 @@
     align-items: center;
     margin-bottom: 2rem;
     padding: 2rem;
-    background: linear-gradient(135deg, #8b5cf6 0%, #7c3aed 100%);
+    background: linear-gradient(135deg, #1e293b 0%, #334155 100%);
     border-radius: 1rem;
     color: white;
 }
@@ -299,7 +298,7 @@
 .search-input {
     width: 100%;
     padding: 0.75rem 1rem 0.75rem 2.5rem;
-    border: 1px solid #d1d5db;
+    border: 1px solid #e2e8f0;
     border-radius: 0.5rem;
     font-size: 1rem;
 }
@@ -313,7 +312,7 @@
 
 .filter-select {
     padding: 0.75rem 1rem;
-    border: 1px solid #d1d5db;
+    border: 1px solid #e2e8f0;
     border-radius: 0.5rem;
     background: white;
     min-width: 150px;
@@ -326,7 +325,7 @@
 
 .sort-btn {
     padding: 0.5rem 1rem;
-    border: 1px solid #d1d5db;
+    border: 1px solid #e2e8f0;
     border-radius: 0.5rem;
     background: white;
     cursor: pointer;
@@ -364,6 +363,7 @@
 .note-card {
     background: white;
     border-radius: 1rem;
+    border: 1px solid #e2e8f0;
     box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
     overflow: hidden;
     transition: all 0.3s ease;
@@ -380,7 +380,7 @@
     align-items: center;
     padding: 1rem 1.5rem;
     background: #f8fafc;
-    border-bottom: 1px solid #e5e7eb;
+    border-bottom: 1px solid #f1f5f9;
 }
 
 .priority-badge {
@@ -391,10 +391,10 @@
     text-transform: uppercase;
 }
 
-.priority-basse { background: #f3f4f6; color: #374151; }
-.priority-normale { background: #dbeafe; color: #1e40af; }
-.priority-haute { background: #fef3c7; color: #d97706; }
-.priority-urgente { background: #fee2e2; color: #dc2626; }
+.priority-basse { background: #f1f5f9; color: #475569; }
+.priority-normale { background: #ecfeff; color: #0891b2; }
+.priority-haute { background: #fffbeb; color: #d97706; }
+.priority-urgente { background: #fff1f2; color: #e11d48; }
 
 .note-actions {
     display: flex;
@@ -457,7 +457,7 @@
 .appointment-date {
     margin-left: auto;
     font-weight: 500;
-    color: #8b5cf6;
+    color: #06b6d4;
 }
 
 .note-text {
@@ -472,7 +472,7 @@
     align-items: center;
     margin-top: 1rem;
     padding-top: 1rem;
-    border-top: 1px solid #e5e7eb;
+    border-top: 1px solid #f1f5f9;
 }
 
 .note-date {
@@ -520,6 +520,7 @@
 .modal-content {
     background: white;
     border-radius: 1rem;
+    border: 1px solid #e2e8f0;
     max-width: 800px;
     width: 100%;
     max-height: 90vh;
@@ -532,7 +533,7 @@
 
 .modal-header {
     padding: 1.5rem;
-    border-bottom: 1px solid #e5e7eb;
+    border-bottom: 1px solid #f1f5f9;
     display: flex;
     justify-content: space-between;
     align-items: center;
@@ -603,6 +604,11 @@
     box-shadow: 0 0 0 3px rgba(139, 92, 246, 0.1);
 }
 
+.view-btn {
+    background: #f5f3ff;
+    color: #7c3aed;
+}
+
 .error-message {
     color: #dc2626;
     font-size: 0.875rem;
@@ -611,7 +617,7 @@
 
 .modal-actions {
     padding: 1.5rem;
-    border-top: 1px solid #e5e7eb;
+    border-top: 1px solid #f1f5f9;
     display: flex;
     gap: 1rem;
     justify-content: flex-end;
@@ -664,22 +670,22 @@
         gap: 1rem;
         text-align: center;
     }
-    
+
     .filters-section {
         flex-direction: column;
     }
-    
+
     .filter-controls {
         flex-wrap: wrap;
     }
-    
+
     .notes-grid {
         grid-template-columns: 1fr;
     }
-    
+
     .form-grid {
         grid-template-columns: 1fr;
     }
-}
-</style>
+    }
+    </style>
 </div>

@@ -20,15 +20,15 @@
         <div class="search-box">
             <div class="search-input-group">
                 <i class="fas fa-search"></i>
-                <input 
-                    type="text" 
-                    wire:model.live="search" 
+                <input
+                    type="text"
+                    wire:model.live="search"
                     placeholder="Rechercher par nom, email ou téléphone..."
                     class="search-input"
                 >
             </div>
         </div>
-        
+
         <div class="filter-controls">
             <select wire:model.live="statusFilter" class="filter-select">
                 <option value="">Tous les statuts</option>
@@ -36,16 +36,16 @@
                     <option value="{{ $status->id }}">{{ $status->nom }}</option>
                 @endforeach
             </select>
-            
+
             <div class="sort-controls">
                 <button wire:click="sortBy('nom')" class="sort-btn {{ $sortBy === 'nom' ? 'active' : '' }}">
-                    Nom 
+                    Nom
                     @if($sortBy === 'nom')
                         <i class="fas fa-sort-{{ $sortDirection === 'asc' ? 'up' : 'down' }}"></i>
                     @endif
                 </button>
                 <button wire:click="sortBy('created_at')" class="sort-btn {{ $sortBy === 'created_at' ? 'active' : '' }}">
-                    Date 
+                    Date
                     @if($sortBy === 'created_at')
                         <i class="fas fa-sort-{{ $sortDirection === 'asc' ? 'up' : 'down' }}"></i>
                     @endif
@@ -69,43 +69,43 @@
                 <div class="contact-avatar">
                     <i class="fas fa-user"></i>
                 </div>
-                
+
                 <div class="contact-info">
                     <h3 class="contact-name">{{ $contact->nom }} {{ $contact->prenom }}</h3>
-                    
+
                     @if($contact->email)
                         <p class="contact-detail">
                             <i class="fas fa-envelope"></i>
                             <a href="mailto:{{ $contact->email }}">{{ $contact->email }}</a>
                         </p>
                     @endif
-                    
+
                     @if($contact->telephone)
                         <p class="contact-detail">
                             <i class="fas fa-phone"></i>
                             <a href="tel:{{ $contact->telephone }}">{{ $contact->telephone }}</a>
                         </p>
                     @endif
-                    
+
                     @if($contact->ville)
                         <p class="contact-detail">
                             <i class="fas fa-map-marker-alt"></i>
                             {{ $contact->ville }}
                         </p>
                     @endif
-                    
+
                     <div class="contact-status">
                         <span class="status-badge status-{{ strtolower(str_replace(' ', '-', $contact->status->nom)) }}">
                             {{ $contact->status->nom }}
                         </span>
                     </div>
-                    
+
                     <p class="contact-date">
                         <i class="fas fa-calendar"></i>
                         Ajouté le {{ $contact->created_at->format('d/m/Y') }}
                     </p>
                 </div>
-                
+
                 <div class="contact-actions">
                     <button wire:click="openEditModal({{ $contact->id }})" class="action-btn edit-btn" title="Modifier">
                         <i class="fas fa-edit"></i>
@@ -150,7 +150,7 @@
                         <i class="fas fa-times"></i>
                     </button>
                 </div>
-                
+
                 <form wire:submit.prevent="{{ $showCreateModal ? 'createContact' : 'updateContact' }}" class="modal-form">
                     <div class="form-grid">
                         <div class="form-group">
@@ -158,49 +158,49 @@
                             <input type="text" id="nom" wire:model="nom" class="form-input" required>
                             @error('nom') <span class="error-message">{{ $message }}</span> @enderror
                         </div>
-                        
+
                         <div class="form-group">
                             <label for="prenom" class="form-label">Prénom *</label>
                             <input type="text" id="prenom" wire:model="prenom" class="form-input" required>
                             @error('prenom') <span class="error-message">{{ $message }}</span> @enderror
                         </div>
-                        
+
                         <div class="form-group">
                             <label for="email" class="form-label">Email</label>
                             <input type="email" id="email" wire:model="email" class="form-input">
                             @error('email') <span class="error-message">{{ $message }}</span> @enderror
                         </div>
-                        
+
                         <div class="form-group">
                             <label for="telephone" class="form-label">Téléphone</label>
                             <input type="tel" id="telephone" wire:model="telephone" class="form-input">
                             @error('telephone') <span class="error-message">{{ $message }}</span> @enderror
                         </div>
-                        
+
                         <div class="form-group full-width">
                             <label for="adresse" class="form-label">Adresse</label>
                             <input type="text" id="adresse" wire:model="adresse" class="form-input">
                             @error('adresse') <span class="error-message">{{ $message }}</span> @enderror
                         </div>
-                        
+
                         <div class="form-group">
                             <label for="ville" class="form-label">Ville</label>
                             <input type="text" id="ville" wire:model="ville" class="form-input">
                             @error('ville') <span class="error-message">{{ $message }}</span> @enderror
                         </div>
-                        
+
                         <div class="form-group">
                             <label for="code_postal" class="form-label">Code Postal</label>
                             <input type="text" id="code_postal" wire:model="code_postal" class="form-input">
                             @error('code_postal') <span class="error-message">{{ $message }}</span> @enderror
                         </div>
-                        
+
                         <div class="form-group">
                             <label for="pays" class="form-label">Pays</label>
                             <input type="text" id="pays" wire:model="pays" class="form-input">
                             @error('pays') <span class="error-message">{{ $message }}</span> @enderror
                         </div>
-                        
+
                         <div class="form-group">
                             <label for="status_id" class="form-label">Statut *</label>
                             <select id="status_id" wire:model="status_id" class="form-select" required>
@@ -211,14 +211,14 @@
                             </select>
                             @error('status_id') <span class="error-message">{{ $message }}</span> @enderror
                         </div>
-                        
+
                         <div class="form-group full-width">
                             <label for="notes" class="form-label">Notes</label>
                             <textarea id="notes" wire:model="notes" class="form-textarea" rows="3"></textarea>
                             @error('notes') <span class="error-message">{{ $message }}</span> @enderror
                         </div>
                     </div>
-                    
+
                     <div class="modal-actions">
                         <button type="button" wire:click="closeModals" class="btn btn-secondary">
                             Annuler
@@ -246,12 +246,12 @@
                         <i class="fas fa-times"></i>
                     </button>
                 </div>
-                
+
                 <div class="modal-body">
                     <p>Êtes-vous sûr de vouloir supprimer le contact <strong>{{ $selectedContact->nom }} {{ $selectedContact->prenom }}</strong> ?</p>
                     <p class="text-sm text-gray-600">Cette action est irréversible.</p>
                 </div>
-                
+
                 <div class="modal-actions">
                     <button wire:click="closeModals" class="btn btn-secondary">
                         Annuler
@@ -277,7 +277,7 @@
     align-items: center;
     margin-bottom: 2rem;
     padding: 2rem;
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    background: linear-gradient(135deg, #0f172a 0%, #1e3a5f 100%);
     border-radius: 1rem;
     color: white;
 }
@@ -324,7 +324,7 @@
 .search-input {
     width: 100%;
     padding: 0.75rem 1rem 0.75rem 2.5rem;
-    border: 1px solid #d1d5db;
+    border: 1px solid #e2e8f0;
     border-radius: 0.5rem;
     font-size: 1rem;
 }
@@ -337,7 +337,7 @@
 
 .filter-select {
     padding: 0.75rem 1rem;
-    border: 1px solid #d1d5db;
+    border: 1px solid #e2e8f0;
     border-radius: 0.5rem;
     background: white;
 }
@@ -349,7 +349,7 @@
 
 .sort-btn {
     padding: 0.5rem 1rem;
-    border: 1px solid #d1d5db;
+    border: 1px solid #e2e8f0;
     border-radius: 0.5rem;
     background: white;
     cursor: pointer;
@@ -357,9 +357,9 @@
 }
 
 .sort-btn:hover, .sort-btn.active {
-    background: #3b82f6;
+    background: #06b6d4;
     color: white;
-    border-color: #3b82f6;
+    border-color: #06b6d4;
 }
 
 .alert {
@@ -391,6 +391,7 @@
     box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
     transition: all 0.3s ease;
     position: relative;
+    border: 1px solid #e2e8f0;
 }
 
 .contact-card:hover {
@@ -402,7 +403,7 @@
     width: 60px;
     height: 60px;
     border-radius: 50%;
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    background: linear-gradient(135deg, #06b6d4 0%, #0891b2 100%);
     display: flex;
     align-items: center;
     justify-content: center;
@@ -428,7 +429,7 @@
 }
 
 .contact-detail a {
-    color: #3b82f6;
+    color: #06b6d4;
     text-decoration: none;
 }
 
@@ -448,7 +449,7 @@
     text-transform: uppercase;
 }
 
-.status-prospect { background: #dbeafe; color: #1e40af; }
+.status-prospect { background: #ecfeff; color: #0891b2; }
 .status-client-actif { background: #d1fae5; color: #065f46; }
 .status-client-inactif { background: #fee2e2; color: #dc2626; }
 
@@ -493,13 +494,13 @@
 }
 
 .view-btn {
-    background: #dbeafe;
-    color: #2563eb;
+    background: #ecfeff;
+    color: #0891b2;
     text-decoration: none;
 }
 
 .view-btn:hover {
-    background: #3b82f6;
+    background: #06b6d4;
     color: white;
 }
 
@@ -553,6 +554,7 @@
     width: 100%;
     max-height: 90vh;
     overflow-y: auto;
+    border: 1px solid #e2e8f0;
 }
 
 .modal-content.small {
@@ -561,7 +563,7 @@
 
 .modal-header {
     padding: 1.5rem;
-    border-bottom: 1px solid #e5e7eb;
+    border-bottom: 1px solid #f1f5f9;
     display: flex;
     justify-content: space-between;
     align-items: center;
@@ -628,8 +630,8 @@
 
 .form-input:focus, .form-select:focus, .form-textarea:focus {
     outline: none;
-    border-color: #3b82f6;
-    box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+    border-color: #06b6d4;
+    box-shadow: 0 0 0 3px rgba(6, 182, 212, 0.1);
 }
 
 .error-message {
@@ -640,7 +642,7 @@
 
 .modal-actions {
     padding: 1.5rem;
-    border-top: 1px solid #e5e7eb;
+    border-top: 1px solid #f1f5f9;
     display: flex;
     gap: 1rem;
     justify-content: flex-end;
@@ -660,12 +662,12 @@
 }
 
 .btn-primary {
-    background: #3b82f6;
+    background: #06b6d4;
     color: white;
 }
 
 .btn-primary:hover {
-    background: #2563eb;
+    background: #0891b2;
 }
 
 .btn-secondary {
@@ -693,19 +695,19 @@
         gap: 1rem;
         text-align: center;
     }
-    
+
     .filters-section {
         flex-direction: column;
     }
-    
+
     .filter-controls {
         flex-wrap: wrap;
     }
-    
+
     .contacts-grid {
         grid-template-columns: 1fr;
     }
-    
+
     .form-grid {
         grid-template-columns: 1fr;
     }
