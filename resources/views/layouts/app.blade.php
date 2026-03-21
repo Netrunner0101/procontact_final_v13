@@ -7,10 +7,10 @@
 
     <title>@yield('title', 'Pro Contact')</title>
 
-    <!-- Fonts -->
+    <!-- Fonts — Manrope (headlines) + Inter (body) -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
 
     <!-- Icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
@@ -24,18 +24,18 @@
 </head>
 <body class="font-sans antialiased">
     <div class="min-h-screen">
-        <!-- Navigation -->
-        <nav class="sticky top-0 z-50" style="background: #0f172a; border-bottom: 1px solid rgba(148,163,184,0.1);">
+        <!-- Glass Navigation Bar -->
+        <nav class="sticky top-0 z-50" style="background: rgba(255,255,255,0.70); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); border-bottom: 1px solid rgba(197,200,185,0.10);">
             <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                 <div class="flex justify-between h-16">
                     <div class="flex items-center">
                         <!-- Logo -->
                         <div class="flex-shrink-0 flex items-center">
                             <a href="{{ route('dashboard') }}" class="flex items-center space-x-3 group">
-                                <div class="w-9 h-9 rounded-lg flex items-center justify-center group-hover:scale-105 transition-transform duration-200" style="background: linear-gradient(135deg, #06b6d4, #8b5cf6);">
+                                <div class="w-9 h-9 rounded-lg flex items-center justify-center group-hover:scale-105 transition-transform duration-200" style="background: linear-gradient(135deg, #843728, #c4816e);">
                                     <i class="fas fa-address-book text-white text-sm"></i>
                                 </div>
-                                <span class="text-xl font-bold text-gradient">Pro Contact</span>
+                                <span class="text-xl font-bold text-gradient" style="font-family: 'Manrope', sans-serif;">Pro Contact</span>
                             </a>
                         </div>
 
@@ -57,8 +57,8 @@
                         <div class="ml-3 relative">
                             @auth
                                 <div class="relative inline-block text-left">
-                                    <button type="button" class="inline-flex items-center px-4 py-2 text-sm font-medium rounded-lg transition-all duration-200" id="user-menu-button" onclick="toggleUserMenu()" style="background: rgba(148,163,184,0.1); border: 1px solid rgba(148,163,184,0.15); color: #e2e8f0;">
-                                        <div class="w-7 h-7 rounded-full flex items-center justify-center mr-2" style="background: linear-gradient(135deg, #06b6d4, #8b5cf6);">
+                                    <button type="button" class="inline-flex items-center px-4 py-2 text-sm font-medium rounded-lg transition-all duration-200" id="user-menu-button" onclick="toggleUserMenu()" style="background: #f5f3f0; color: #1b1c1a;">
+                                        <div class="w-7 h-7 rounded-full flex items-center justify-center mr-2" style="background: linear-gradient(135deg, #843728, #c4816e);">
                                             <i class="fas fa-user text-white text-xs"></i>
                                         </div>
                                         <span>{{ Auth::user()->prenom }} {{ Auth::user()->nom }}</span>
@@ -67,31 +67,31 @@
                                         </svg>
                                     </button>
 
-                                    <div id="user-menu" class="hidden absolute right-0 mt-2 w-56 bg-white rounded-xl shadow-xl border border-slate-200 py-1 z-50">
-                                        <div class="px-4 py-3 border-b border-slate-100">
-                                            <div class="font-semibold text-slate-800">{{ Auth::user()->prenom }} {{ Auth::user()->nom }}</div>
-                                            <div class="text-sm text-slate-500 mt-0.5">{{ Auth::user()->email }}</div>
+                                    <div id="user-menu" class="hidden absolute right-0 mt-2 w-56 rounded-xl py-1 z-50" style="background: #ffffff; box-shadow: 0 20px 40px rgba(27,28,26,0.05);">
+                                        <div class="px-4 py-3" style="background: #e9e6e3; border-radius: 0.75rem 0.75rem 0 0;">
+                                            <div class="font-semibold" style="color: #1b1c1a;">{{ Auth::user()->prenom }} {{ Auth::user()->nom }}</div>
+                                            <div class="text-sm mt-0.5" style="color: #44483e;">{{ Auth::user()->email }}</div>
                                             @if(Auth::user()->last_login_at)
-                                                <div class="text-xs text-slate-400 mt-1">
+                                                <div class="text-xs mt-1" style="color: #75786c;">
                                                     Derni&egrave;re connexion: {{ Auth::user()->last_login_at->diffForHumans() }}
                                                 </div>
                                             @endif
                                         </div>
-                                        <a href="{{ route('profile.show') }}" class="flex items-center px-4 py-2.5 text-sm text-slate-700 hover:bg-cyan-50 hover:text-cyan-700 transition-colors">
-                                            <i class="fas fa-user mr-3 text-slate-400"></i>
+                                        <a href="{{ route('profile.show') }}" class="flex items-center px-4 py-2.5 text-sm transition-colors" style="color: #44483e;" onmouseover="this.style.background='#ffdbd1';this.style.color='#341100'" onmouseout="this.style.background='';this.style.color='#44483e'">
+                                            <i class="fas fa-user mr-3" style="color: #75786c;"></i>
                                             Mon Profil
                                         </a>
                                         <form method="POST" action="{{ route('logout') }}" class="block">
                                             @csrf
-                                            <button type="submit" class="flex items-center w-full text-left px-4 py-2.5 text-sm text-slate-700 hover:bg-rose-50 hover:text-rose-600 transition-colors">
-                                                <i class="fas fa-sign-out-alt mr-3 text-slate-400"></i>
+                                            <button type="submit" class="flex items-center w-full text-left px-4 py-2.5 text-sm transition-colors" style="color: #44483e;" onmouseover="this.style.background='#ffdad6';this.style.color='#410002'" onmouseout="this.style.background='';this.style.color='#44483e'">
+                                                <i class="fas fa-sign-out-alt mr-3" style="color: #75786c;"></i>
                                                 Se d&eacute;connecter
                                             </button>
                                         </form>
                                     </div>
                                 </div>
                             @else
-                                <a href="{{ route('login') }}" class="text-slate-300 hover:text-white transition-colors">
+                                <a href="{{ route('login') }}" style="color: #44483e;" class="hover:opacity-80 transition-colors">
                                     Se connecter
                                 </a>
                             @endauth
@@ -105,7 +105,7 @@
         <main>
             @if (session('success'))
                 <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-4">
-                    <div class="flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium" style="background: #ecfdf5; color: #059669; border: 1px solid #a7f3d0;">
+                    <div class="flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium" style="background: #c0f0b8; color: #002204;">
                         <i class="fas fa-check-circle"></i>
                         {{ session('success') }}
                     </div>
@@ -114,7 +114,7 @@
 
             @if (session('error'))
                 <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-4">
-                    <div class="flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium" style="background: #fff1f2; color: #e11d48; border: 1px solid #fecdd3;">
+                    <div class="flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium" style="background: #ffdad6; color: #410002;">
                         <i class="fas fa-exclamation-circle"></i>
                         {{ session('error') }}
                     </div>
@@ -126,7 +126,7 @@
     </div>
 
     <style>
-        /* Navigation Link Styles */
+        /* Navigation Link Styles — Glass Nav */
         .nav-link {
             display: flex;
             align-items: center;
@@ -135,20 +135,20 @@
             border-radius: 0.5rem;
             font-size: 0.875rem;
             font-weight: 500;
-            color: #94a3b8;
+            color: #75786c;
             text-decoration: none;
-            transition: all 0.2s ease-in-out;
+            transition: all 0.25s ease-in-out;
             position: relative;
         }
 
         .nav-link:hover {
-            color: #e2e8f0;
-            background-color: rgba(148, 163, 184, 0.1);
+            color: #1b1c1a;
+            background-color: rgba(245, 243, 240, 0.8);
         }
 
         .nav-link-active {
-            color: #22d3ee !important;
-            background-color: rgba(6, 182, 212, 0.1);
+            color: #843728 !important;
+            background-color: rgba(255, 219, 209, 0.3);
         }
 
         .nav-link-active::after {
@@ -159,7 +159,7 @@
             transform: translateX(-50%);
             width: 4px;
             height: 4px;
-            background-color: #06b6d4;
+            background-color: #843728;
             border-radius: 50%;
         }
 
@@ -190,10 +190,10 @@
             }
         }
 
-        /* Loading Spinner */
+        /* Loading Spinner — Terracotta */
         .spinner {
-            border: 2px solid #e2e8f0;
-            border-top: 2px solid #06b6d4;
+            border: 2px solid #e9e6e3;
+            border-top: 2px solid #843728;
             border-radius: 50%;
             width: 20px;
             height: 20px;
@@ -248,9 +248,9 @@
 
         function showNotification(message, type = 'success') {
             const colors = {
-                success: 'background: #ecfdf5; color: #059669; border: 1px solid #a7f3d0;',
-                error: 'background: #fff1f2; color: #e11d48; border: 1px solid #fecdd3;',
-                info: 'background: #ecfeff; color: #0891b2; border: 1px solid #a5f3fc;'
+                success: 'background: #c0f0b8; color: #002204;',
+                error: 'background: #ffdad6; color: #410002;',
+                info: 'background: #f5dfd0; color: #281810;'
             };
             const notification = document.createElement('div');
             notification.className = 'fixed top-4 right-4 z-50 px-4 py-3 rounded-xl shadow-lg max-w-sm fade-in-up text-sm font-medium';
