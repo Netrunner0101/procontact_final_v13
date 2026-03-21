@@ -218,7 +218,7 @@
     align-items: center;
     margin-bottom: 2rem;
     padding: 2rem;
-    background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+    background: linear-gradient(135deg, #1b1c1a 0%, #2d2e2a 100%);
     border-radius: 1rem;
     color: white;
 }
@@ -250,7 +250,7 @@
     background: white;
     border-radius: 1rem;
     box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
-    border: 1px solid #e2e8f0;
+    border: none;
 }
 
 .control-group {
@@ -267,7 +267,7 @@
 
 .control-select {
     padding: 0.75rem 1rem;
-    border: 1px solid #e2e8f0;
+    border: none;
     border-radius: 0.5rem;
     background: white;
     min-width: 200px;
@@ -282,13 +282,13 @@
     border-radius: 1rem;
     box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
     overflow: hidden;
-    border: 1px solid #e2e8f0;
+    border: none;
 }
 
 .chart-header {
     padding: 1.5rem;
-    border-bottom: 1px solid #f1f5f9;
-    background: #f8fafc;
+    border-bottom: none;
+    background: #fbf9f6;
 }
 
 .chart-title {
@@ -323,7 +323,7 @@
     border-radius: 1rem;
     box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
     overflow: hidden;
-    border: 1px solid #e2e8f0;
+    border: none;
 }
 
 .stat-card.full-width {
@@ -332,8 +332,8 @@
 
 .stat-header {
     padding: 1.5rem;
-    border-bottom: 1px solid #f1f5f9;
-    background: #f8fafc;
+    border-bottom: none;
+    background: #fbf9f6;
 }
 
 .stat-title {
@@ -361,13 +361,13 @@
     justify-content: space-between;
     align-items: center;
     padding: 1rem;
-    border: 1px solid #f1f5f9;
+    border: none;
     border-radius: 0.5rem;
     transition: all 0.2s ease;
 }
 
 .activity-item:hover, .status-item:hover, .priority-item:hover {
-    border-color: #06b6d4;
+    border-color: #843728;
     box-shadow: 0 2px 4px -1px rgba(0, 0, 0, 0.1);
 }
 
@@ -391,7 +391,7 @@
     display: block;
     font-size: 1.5rem;
     font-weight: 700;
-    color: #06b6d4;
+    color: #843728;
 }
 
 .stat-label {
@@ -408,17 +408,17 @@
     text-transform: uppercase;
 }
 
-.status-programmé { background: #ecfeff; color: #0891b2; }
-.status-confirmé { background: #ecfdf5; color: #059669; }
-.status-en-cours { background: #fffbeb; color: #d97706; }
-.status-terminé { background: #f5f3ff; color: #7c3aed; }
-.status-annulé { background: #fff1f2; color: #e11d48; }
-.status-reporté { background: #f1f5f9; color: #475569; }
+.status-programmé { background: #fef5f3; color: #6d2a1d; }
+.status-confirmé { background: #f0faf0; color: #2d5a2d; }
+.status-en-cours { background: #fffbf0; color: #6d5624; }
+.status-terminé { background: #f5f3ff; color: #6d5624; }
+.status-annulé { background: #fff5f5; color: #9c1414; }
+.status-reporté { background: #f5f3f0; color: #44483e; }
 
-.priority-basse { background: #f1f5f9; color: #475569; }
-.priority-normale { background: #ecfeff; color: #0891b2; }
-.priority-haute { background: #fffbeb; color: #d97706; }
-.priority-urgente { background: #fff1f2; color: #e11d48; }
+.priority-basse { background: #f5f3f0; color: #44483e; }
+.priority-normale { background: #fef5f3; color: #6d2a1d; }
+.priority-haute { background: #fffbf0; color: #6d5624; }
+.priority-urgente { background: #fff5f5; color: #9c1414; }
 
 .monthly-grid {
     display: grid;
@@ -428,7 +428,7 @@
 
 .monthly-item {
     padding: 1rem;
-    border: 1px solid #e2e8f0;
+    border: none;
     border-radius: 0.5rem;
     text-align: center;
 }
@@ -477,22 +477,22 @@
 }
 
 .btn-primary {
-    background: #06b6d4;
+    background: #843728;
     color: white;
 }
 
 .btn-primary:hover {
-    background: #0891b2;
+    background: #6d2a1d;
 }
 
 .btn-secondary {
-    background: rgba(6, 182, 212, 0.15);
+    background: rgba(132, 55, 40, 0.15);
     color: white;
-    border: 1px solid rgba(6, 182, 212, 0.3);
+    border: none;
 }
 
 .btn-secondary:hover {
-    background: rgba(6, 182, 212, 0.25);
+    background: rgba(132, 55, 40, 0.25);
 }
 
 @media (max-width: 768px) {

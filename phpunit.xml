@@ -23,11 +23,11 @@
         <env name="BCRYPT_ROUNDS" value="4"/>
         <env name="CACHE_STORE" value="array"/>
         <env name="DB_CONNECTION" value="pgsql"/>
-        <env name="DB_HOST" value="localhost"/>
-        <env name="DB_PORT" value="5445"/>
-        <env name="DB_DATABASE" value="agenda_app_test"/>
-        <env name="DB_USERNAME" value="postgres"/>
-        <env name="DB_PASSWORD" value="root"/>
+        <env name="DB_HOST" value="72.60.23.156"/>
+        <env name="DB_PORT" value="5433"/>
+        <env name="DB_DATABASE" value="procontact_test"/>
+        <env name="DB_USERNAME" value="procontact_admin"/>
+        <env name="DB_PASSWORD" value="ProContact2024!Secure"/>
         <env name="MAIL_MAILER" value="array"/>
         <env name="QUEUE_CONNECTION" value="sync"/>
         <env name="SESSION_DRIVER" value="array"/>

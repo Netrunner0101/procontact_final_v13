@@ -66,8 +66,8 @@ class ModelTest extends TestCase
 
     public function test_user_role_helper_methods()
     {
-        $admin = User::factory()->create(['role' => 'admin']);
-        $client = User::factory()->create(['role' => 'client']);
+        $admin = User::factory()->create(['role_id' => 1]);
+        $client = User::factory()->create(['role_id' => 2]);
 
         $this->assertTrue($admin->isAdmin());
         $this->assertFalse($admin->isClient());
