@@ -85,6 +85,15 @@ jobs:
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
 
+      - name: Determine Dockerfile
+        id: dockerfile
+        run: |
+          if [[ "${{ github.ref }}" == "refs/heads/main" ]] || [[ "${{ github.ref }}" == refs/tags/v* ]]; then
+            echo "file=Dockerfile.production" >> $GITHUB_OUTPUT
+          else
+            echo "file=Dockerfile.staging" >> $GITHUB_OUTPUT
+          fi
+
       - name: Extract metadata
         id: meta
         uses: docker/metadata-action@v5
@@ -100,6 +109,7 @@ jobs:
         uses: docker/build-push-action@v6
         with:
           context: .
+          file: ${{ steps.dockerfile.outputs.file }}
           push: true
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
