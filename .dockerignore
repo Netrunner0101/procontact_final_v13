@@ -22,7 +22,7 @@ storage/framework/views/*
 !.env.example
 
 docker-compose*.yml
-Dockerfile
+Dockerfile*
 .dockerignore
 
 *.md

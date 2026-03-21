@@ -251,7 +251,7 @@
     align-items: center;
     margin-bottom: 2rem;
     padding: 2rem;
-    background: linear-gradient(135deg, #1e293b 0%, #334155 100%);
+    background: linear-gradient(135deg, #2d2e2a 0%, #44483e 100%);
     border-radius: 1rem;
     color: white;
 }
@@ -298,7 +298,7 @@
 .search-input {
     width: 100%;
     padding: 0.75rem 1rem 0.75rem 2.5rem;
-    border: 1px solid #e2e8f0;
+    border: none;
     border-radius: 0.5rem;
     font-size: 1rem;
 }
@@ -312,7 +312,7 @@
 
 .filter-select {
     padding: 0.75rem 1rem;
-    border: 1px solid #e2e8f0;
+    border: none;
     border-radius: 0.5rem;
     background: white;
     min-width: 150px;
@@ -325,7 +325,7 @@
 
 .sort-btn {
     padding: 0.5rem 1rem;
-    border: 1px solid #e2e8f0;
+    border: none;
     border-radius: 0.5rem;
     background: white;
     cursor: pointer;
@@ -333,9 +333,9 @@
 }
 
 .sort-btn:hover, .sort-btn.active {
-    background: #8b5cf6;
+    background: #8a6e2e;
     color: white;
-    border-color: #8b5cf6;
+    border-color: #8a6e2e;
 }
 
 .alert {
@@ -348,9 +348,9 @@
 }
 
 .alert-success {
-    background: #d1fae5;
+    background: #c0f0b8;
     color: #065f46;
-    border: 1px solid #a7f3d0;
+    border: none;
 }
 
 .notes-grid {
@@ -363,7 +363,7 @@
 .note-card {
     background: white;
     border-radius: 1rem;
-    border: 1px solid #e2e8f0;
+    border: none;
     box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
     overflow: hidden;
     transition: all 0.3s ease;
@@ -379,8 +379,8 @@
     justify-content: space-between;
     align-items: center;
     padding: 1rem 1.5rem;
-    background: #f8fafc;
-    border-bottom: 1px solid #f1f5f9;
+    background: #fbf9f6;
+    border-bottom: none;
 }
 
 .priority-badge {
@@ -391,10 +391,10 @@
     text-transform: uppercase;
 }
 
-.priority-basse { background: #f1f5f9; color: #475569; }
-.priority-normale { background: #ecfeff; color: #0891b2; }
-.priority-haute { background: #fffbeb; color: #d97706; }
-.priority-urgente { background: #fff1f2; color: #e11d48; }
+.priority-basse { background: #f5f3f0; color: #44483e; }
+.priority-normale { background: #fef5f3; color: #6d2a1d; }
+.priority-haute { background: #fffbf0; color: #6d5624; }
+.priority-urgente { background: #fff5f5; color: #9c1414; }
 
 .note-actions {
     display: flex;
@@ -415,12 +415,12 @@
 }
 
 .edit-btn {
-    background: #fef3c7;
-    color: #d97706;
+    background: #ffdfa0;
+    color: #6d5624;
 }
 
 .edit-btn:hover {
-    background: #fbbf24;
+    background: #d4a844;
     color: white;
 }
 
@@ -457,7 +457,7 @@
 .appointment-date {
     margin-left: auto;
     font-weight: 500;
-    color: #06b6d4;
+    color: #843728;
 }
 
 .note-text {
@@ -472,7 +472,7 @@
     align-items: center;
     margin-top: 1rem;
     padding-top: 1rem;
-    border-top: 1px solid #f1f5f9;
+    border-top: none;
 }
 
 .note-date {
@@ -520,7 +520,7 @@
 .modal-content {
     background: white;
     border-radius: 1rem;
-    border: 1px solid #e2e8f0;
+    border: none;
     max-width: 800px;
     width: 100%;
     max-height: 90vh;
@@ -533,7 +533,7 @@
 
 .modal-header {
     padding: 1.5rem;
-    border-bottom: 1px solid #f1f5f9;
+    border-bottom: none;
     display: flex;
     justify-content: space-between;
     align-items: center;
@@ -593,20 +593,20 @@
 
 .form-input, .form-select, .form-textarea {
     padding: 0.75rem;
-    border: 1px solid #d1d5db;
+    border: none;
     border-radius: 0.5rem;
     font-size: 1rem;
 }
 
 .form-input:focus, .form-select:focus, .form-textarea:focus {
     outline: none;
-    border-color: #8b5cf6;
-    box-shadow: 0 0 0 3px rgba(139, 92, 246, 0.1);
+    border-color: #8a6e2e;
+    box-shadow: 0 0 0 3px rgba(138, 110, 46, 0.1);
 }
 
 .view-btn {
-    background: #f5f3ff;
-    color: #7c3aed;
+    background: #faf6ef;
+    color: #6d5624;
 }
 
 .error-message {
@@ -617,7 +617,7 @@
 
 .modal-actions {
     padding: 1.5rem;
-    border-top: 1px solid #f1f5f9;
+    border-top: none;
     display: flex;
     gap: 1rem;
     justify-content: flex-end;
@@ -637,18 +637,18 @@
 }
 
 .btn-primary {
-    background: #8b5cf6;
+    background: #8a6e2e;
     color: white;
 }
 
 .btn-primary:hover {
-    background: #7c3aed;
+    background: #6d5624;
 }
 
 .btn-secondary {
     background: #f3f4f6;
     color: #374151;
-    border: 1px solid #d1d5db;
+    border: none;
 }
 
 .btn-secondary:hover {

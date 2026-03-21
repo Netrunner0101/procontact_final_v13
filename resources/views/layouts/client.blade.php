@@ -5,35 +5,35 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="csrf-token" content="{{ csrf_token() }}">
     <title>{{ config('app.name', 'Pro Contact') }} - Espace Client</title>
-    
-    <!-- Fonts -->
+
+    <!-- Fonts — Manrope + Inter -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
-    
+    <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+
     <!-- Icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    
+
     <!-- Scripts -->
     @vite(['resources/css/app.css', 'resources/js/app.js'])
     <script src="https://cdn.tailwindcss.com"></script>
 </head>
-<body class="font-sans antialiased" style="background: linear-gradient(135deg, #e0f2fe 0%, #b3e5fc 100%); min-height: 100vh;">
+<body class="font-sans antialiased" style="background: #fbf9f6; min-height: 100vh;">
     <div class="min-h-screen">
-        <!-- Navigation -->
-        <nav class="glass-effect border-b border-blue-200/20 sticky top-0 z-50">
+        <!-- Glass Navigation -->
+        <nav class="sticky top-0 z-50" style="background: rgba(255,255,255,0.70); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); border-bottom: 1px solid rgba(197,200,185,0.10);">
             <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                 <div class="flex justify-between h-16">
                     <div class="flex items-center">
                         <!-- Logo -->
                         <div class="flex-shrink-0 flex items-center">
                             <div class="flex items-center space-x-3">
-                                <div class="w-8 h-8 bg-gradient-to-br from-blue-500 to-cyan-600 rounded-lg flex items-center justify-center">
+                                <div class="w-8 h-8 rounded-lg flex items-center justify-center" style="background: linear-gradient(135deg, #843728, #c4816e);">
                                     <i class="fas fa-user-circle text-white text-sm"></i>
                                 </div>
                                 <div>
-                                    <h1 class="text-xl font-bold text-gradient">Pro Contact</h1>
-                                    <span class="text-xs text-blue-600 font-medium">Espace Client</span>
+                                    <h1 class="text-xl font-bold text-gradient" style="font-family: 'Manrope', sans-serif;">Pro Contact</h1>
+                                    <span class="text-xs font-medium" style="color: #843728;">Espace Client</span>
                                 </div>
                             </div>
                         </div>
@@ -56,23 +56,23 @@
                         <div class="ml-3 relative">
                             @auth
                                 <div class="relative inline-block text-left">
-                                    <button type="button" class="inline-flex items-center px-3 py-2 border border-transparent text-sm leading-4 font-medium rounded-md text-gray-500 bg-white hover:text-gray-700 focus:outline-none transition ease-in-out duration-150" id="client-user-menu-button" onclick="toggleClientUserMenu()">
+                                    <button type="button" class="inline-flex items-center px-3 py-2 text-sm leading-4 font-medium rounded-lg transition ease-in-out duration-150" id="client-user-menu-button" onclick="toggleClientUserMenu()" style="background: #f5f3f0; color: #1b1c1a;">
                                         <span>{{ Auth::user()->prenom }} {{ Auth::user()->nom }}</span>
                                         <svg class="ml-2 -mr-0.5 h-4 w-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
                                             <path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd" />
                                         </svg>
                                     </button>
-                                    
-                                    <div id="client-user-menu" class="hidden absolute right-0 mt-2 w-48 bg-white rounded-md shadow-lg py-1 z-50">
-                                        <div class="px-4 py-2 text-sm text-gray-700 border-b">
-                                            <div class="font-medium">{{ Auth::user()->prenom }} {{ Auth::user()->nom }}</div>
-                                            <div class="text-gray-500">{{ Auth::user()->email }}</div>
-                                            <div class="text-xs text-blue-600 mt-1">Espace Client</div>
+
+                                    <div id="client-user-menu" class="hidden absolute right-0 mt-2 w-48 rounded-xl py-1 z-50" style="background: #ffffff; box-shadow: 0 20px 40px rgba(27,28,26,0.05);">
+                                        <div class="px-4 py-2 text-sm" style="background: #e9e6e3; border-radius: 0.75rem 0.75rem 0 0;">
+                                            <div class="font-medium" style="color: #1b1c1a;">{{ Auth::user()->prenom }} {{ Auth::user()->nom }}</div>
+                                            <div style="color: #44483e;">{{ Auth::user()->email }}</div>
+                                            <div class="text-xs mt-1" style="color: #843728;">Espace Client</div>
                                         </div>
                                         <form method="POST" action="{{ route('logout') }}" class="block">
                                             @csrf
-                                            <button type="submit" class="block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
-                                                Se déconnecter
+                                            <button type="submit" class="block w-full text-left px-4 py-2 text-sm transition-colors" style="color: #44483e;" onmouseover="this.style.background='#ffdad6';this.style.color='#410002'" onmouseout="this.style.background='';this.style.color='#44483e'">
+                                                Se d&eacute;connecter
                                             </button>
                                         </form>
                                     </div>
@@ -88,7 +88,8 @@
         <main>
             @if (session('success'))
                 <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-4">
-                    <div class="bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded mb-4">
+                    <div class="flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium" style="background: #c0f0b8; color: #002204;">
+                        <i class="fas fa-check-circle"></i>
                         {{ session('success') }}
                     </div>
                 </div>
@@ -96,7 +97,8 @@
 
             @if (session('error'))
                 <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-4">
-                    <div class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-4">
+                    <div class="flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium" style="background: #ffdad6; color: #410002;">
+                        <i class="fas fa-exclamation-circle"></i>
                         {{ session('error') }}
                     </div>
                 </div>
@@ -105,9 +107,9 @@
             @yield('content')
         </main>
     </div>
-    
+
     <style>
-        /* Client Navigation Styles */
+        /* Client Navigation — Warm, glass */
         .client-nav-link {
             display: flex;
             align-items: center;
@@ -116,23 +118,23 @@
             border-radius: 0.5rem;
             font-size: 0.875rem;
             font-weight: 500;
-            color: #1e40af;
+            color: #75786c;
             text-decoration: none;
-            transition: all 0.2s ease-in-out;
+            transition: all 0.25s ease-in-out;
             position: relative;
         }
-        
+
         .client-nav-link:hover {
-            color: #1d4ed8;
-            background-color: rgba(59, 130, 246, 0.1);
+            color: #1b1c1a;
+            background-color: rgba(245, 243, 240, 0.8);
         }
-        
+
         .client-nav-link-active {
-            color: #1d4ed8;
-            background-color: rgba(59, 130, 246, 0.15);
+            color: #843728;
+            background-color: rgba(255, 219, 209, 0.3);
             font-weight: 600;
         }
-        
+
         .client-nav-link-active::after {
             content: '';
             position: absolute;
@@ -141,25 +143,25 @@
             transform: translateX(-50%);
             width: 4px;
             height: 4px;
-            background-color: #1d4ed8;
+            background-color: #843728;
             border-radius: 50%;
         }
-        
-        /* Client Card Styles */
+
+        /* Client Card — Tonal, no borders */
         .client-card {
-            background: rgba(255, 255, 255, 0.95);
-            border-radius: 1rem;
-            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
-            border: 1px solid rgba(59, 130, 246, 0.1);
-            transition: all 0.2s ease-in-out;
+            background: #ffffff;
+            border-radius: 0.75rem;
+            box-shadow: 0 2px 8px rgba(27, 28, 26, 0.03);
+            border: none;
+            transition: all 0.25s ease-in-out;
         }
-        
+
         .client-card:hover {
-            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+            box-shadow: 0 12px 24px rgba(27, 28, 26, 0.04);
             transform: translateY(-2px);
         }
-        
-        /* Client Badge Styles */
+
+        /* Client Badge */
         .client-badge {
             display: inline-flex;
             align-items: center;
@@ -168,52 +170,53 @@
             font-weight: 500;
             border-radius: 9999px;
             gap: 0.25rem;
+            border: none;
         }
-        
+
         .client-badge-primary {
-            background-color: rgba(59, 130, 246, 0.1);
-            color: #1d4ed8;
+            background-color: #ffdbd1;
+            color: #341100;
         }
-        
+
         .client-badge-success {
-            background-color: rgba(34, 197, 94, 0.1);
-            color: #15803d;
+            background-color: #c0f0b8;
+            color: #002204;
         }
-        
+
         .client-badge-warning {
-            background-color: rgba(245, 158, 11, 0.1);
-            color: #d97706;
+            background-color: #ffdfa0;
+            color: #2d2000;
         }
-        
-        /* Client Button Styles */
+
+        /* Client Button — Terracotta */
         .client-btn {
             display: inline-flex;
             align-items: center;
             justify-content: center;
             padding: 0.5rem 1rem;
             font-size: 0.875rem;
-            font-weight: 500;
-            border-radius: 0.5rem;
+            font-weight: 600;
+            border-radius: 0.375rem;
             border: none;
             cursor: pointer;
-            transition: all 0.2s ease-in-out;
+            transition: all 0.25s ease-in-out;
             text-decoration: none;
             gap: 0.5rem;
         }
-        
+
         .client-btn-primary {
-            background: linear-gradient(135deg, #3b82f6, #1d4ed8);
+            background: linear-gradient(135deg, #843728, #c4816e);
             color: white;
-            box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+            box-shadow: 0 2px 8px rgba(132, 55, 40, 0.25);
         }
-        
+
         .client-btn-primary:hover {
-            background: linear-gradient(135deg, #1d4ed8, #1e40af);
-            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+            background: linear-gradient(135deg, #6d2a1d, #843728);
+            box-shadow: 0 4px 16px rgba(132, 55, 40, 0.35);
             transform: translateY(-1px);
         }
-        
-        /* Mobile Responsive */
+
+        /* Mobile */
         @media (max-width: 1024px) {
             .client-nav-link span {
                 display: none;
@@ -224,20 +227,16 @@
             }
         }
     </style>
-    
+
     <script>
-        // Enhanced Client User Menu Toggle
         function toggleClientUserMenu() {
             const menu = document.getElementById('client-user-menu');
             menu.classList.toggle('hidden');
-            
-            // Add animation class
             if (!menu.classList.contains('hidden')) {
                 menu.classList.add('fade-in-up');
             }
         }
-        
-        // Close dropdown when clicking outside
+
         document.addEventListener('click', function(event) {
             const menu = document.getElementById('client-user-menu');
             const button = document.getElementById('client-user-menu-button');
@@ -245,8 +244,7 @@
                 menu.classList.add('hidden');
             }
         });
-        
-        // Add loading state to forms
+
         document.addEventListener('DOMContentLoaded', function() {
             const forms = document.querySelectorAll('form');
             forms.forEach(form => {
@@ -256,8 +254,6 @@
                         submitBtn.disabled = true;
                         const originalText = submitBtn.textContent || submitBtn.value;
                         submitBtn.innerHTML = '<div class="spinner inline-block mr-2"></div>Chargement...';
-                        
-                        // Re-enable after 5 seconds as fallback
                         setTimeout(() => {
                             submitBtn.disabled = false;
                             submitBtn.textContent = originalText;
@@ -265,38 +261,33 @@
                     }
                 });
             });
-            
-            // Add fade-in animation to page content
+
             const main = document.querySelector('main');
             if (main) {
                 main.classList.add('fade-in-up');
             }
         });
-        
-        // Client notification system
+
         function showClientNotification(message, type = 'info') {
+            const colors = {
+                success: 'background: #c0f0b8; color: #002204;',
+                error: 'background: #ffdad6; color: #410002;',
+                info: 'background: #f5dfd0; color: #281810;'
+            };
             const notification = document.createElement('div');
-            notification.className = `fixed top-4 right-4 z-50 p-4 rounded-lg shadow-lg max-w-sm fade-in-up ${
-                type === 'success' ? 'bg-green-100 border border-green-400 text-green-700' :
-                type === 'error' ? 'bg-red-100 border border-red-400 text-red-700' :
-                'bg-blue-100 border border-blue-400 text-blue-700'
-            }`;
+            notification.className = 'fixed top-4 right-4 z-50 p-4 rounded-xl max-w-sm fade-in-up text-sm font-medium';
+            notification.style.cssText = (colors[type] || colors.info) + ' box-shadow: 0 20px 40px rgba(27,28,26,0.05);';
             notification.innerHTML = `
                 <div class="flex items-center justify-between">
                     <span>${message}</span>
-                    <button onclick="this.parentElement.parentElement.remove()" class="ml-4 text-current hover:opacity-70">
+                    <button onclick="this.parentElement.parentElement.remove()" class="ml-4 opacity-60 hover:opacity-100">
                         <i class="fas fa-times"></i>
                     </button>
                 </div>
             `;
-            
             document.body.appendChild(notification);
-            
-            // Auto remove after 5 seconds
             setTimeout(() => {
-                if (notification.parentElement) {
-                    notification.remove();
-                }
+                if (notification.parentElement) notification.remove();
             }, 5000);
         }
     </script>
