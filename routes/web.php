@@ -15,8 +15,8 @@ use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\MockOAuthController;
 
 Route::get('/', function () {
-    return redirect()->route('dashboard');
-});
+    return view('landing');
+})->name('home');
 
 // OAuth Test Route (for development)
 Route::get('/oauth-test', function () {
