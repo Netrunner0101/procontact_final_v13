@@ -30,8 +30,7 @@ class MockOAuthController extends Controller
                 'provider' => 'google',
                 'avatar' => 'https://via.placeholder.com/150/4285F4/FFFFFF?text=G',
                 'password' => Hash::make(Str::random(16)),
-                'role' => 'admin',
-                'email_verified_at' => now(),
+                'role_id' => 1, // admin
             ]);
         } else {
             // Update existing user with Google info
