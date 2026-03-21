@@ -14,6 +14,7 @@ use Illuminate\Support\Facades\Auth;
 class Dashboard extends Component
 {
     public $stats = [];
+    public $activities = [];
     public $upcomingAppointments = [];
     public $recentContacts = [];
     public $upcomingReminders = [];
@@ -21,11 +22,20 @@ class Dashboard extends Component
 
     public function mount()
     {
+        $this->loadActivities();
         $this->loadStats();
         $this->loadUpcomingAppointments();
         $this->loadRecentContacts();
         $this->loadUpcomingReminders();
         $this->lastLogin = Auth::user()->last_login_at;
+    }
+
+    public function loadActivities()
+    {
+        $this->activities = Activite::with(['contacts', 'rendezVous'])
+            ->where('user_id', Auth::id())
+            ->orderBy('created_at', 'desc')
+            ->get();
     }
 
     public function loadStats()
