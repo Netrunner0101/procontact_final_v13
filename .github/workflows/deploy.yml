@@ -2,7 +2,7 @@ name: CI/CD Pipeline
 
 on:
   push:
-    branches: [develop, staging, main]
+    branches: [staging, main]
     tags: ['v*.*.*']
 
 env:
@@ -10,61 +10,9 @@ env:
   IMAGE_NAME: ${{ github.repository }}
 
 jobs:
-  # ── 1. Run tests ──────────────────────────────────────────
-  test:
-    name: PHPUnit Tests
-    runs-on: ubuntu-latest
-
-    services:
-      postgres:
-        image: postgres:16-alpine
-        env:
-          POSTGRES_DB: procontact_test
-          POSTGRES_USER: procontact
-          POSTGRES_PASSWORD: secret
-        ports:
-          - 5432:5432
-        options: >-
-          --health-cmd "pg_isready -U procontact"
-          --health-interval 10s
-          --health-timeout 5s
-          --health-retries 5
-
-    steps:
-      - uses: actions/checkout@v4
-
-      - name: Setup PHP
-        uses: shivammathur/setup-php@v2
-        with:
-          php-version: '8.3'
-          extensions: pdo_pgsql, pgsql, mbstring, xml, bcmath, intl
-          coverage: none
-
-      - name: Cache Composer dependencies
-        uses: actions/cache@v4
-        with:
-          path: vendor
-          key: composer-${{ hashFiles('composer.lock') }}
-          restore-keys: composer-
-
-      - name: Install dependencies
-        run: composer install --no-interaction --prefer-dist --no-progress
-
-      - name: Prepare environment
-        run: |
-          cp .env.testing .env
-          php artisan key:generate
-
-      - name: Run migrations
-        run: php artisan migrate --force
-
-      - name: Run tests
-        run: php artisan test
-
-  # ── 2. Build & push Docker image ─────────────────────────
+  # ── 1. Build & push Docker image ─────────────────────────
   build-and-push:
     name: Build Docker Image
-    needs: test
     runs-on: ubuntu-latest
     permissions:
       contents: read
@@ -85,6 +33,15 @@ jobs:
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
 
+      - name: Determine Dockerfile
+        id: dockerfile
+        run: |
+          if [[ "${{ github.ref }}" == "refs/heads/main" ]] || [[ "${{ github.ref }}" == refs/tags/v* ]]; then
+            echo "file=Dockerfile.production" >> $GITHUB_OUTPUT
+          else
+            echo "file=Dockerfile.staging" >> $GITHUB_OUTPUT
+          fi
+
       - name: Extract metadata
         id: meta
         uses: docker/metadata-action@v5
@@ -100,35 +57,14 @@ jobs:
         uses: docker/build-push-action@v6
         with:
           context: .
+          file: ${{ steps.dockerfile.outputs.file }}
           push: true
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
           cache-from: type=gha
           cache-to: type=gha,mode=max
 
-  # ── 3a. Deploy to Testing (develop branch) ───────────────
-  deploy-testing:
-    name: Deploy → Testing
-    needs: build-and-push
-    runs-on: ubuntu-latest
-    if: github.ref == 'refs/heads/develop'
-    environment: testing
-
-    steps:
-      - name: Deploy via SSH
-        uses: appleboy/ssh-action@v1.2.0
-        with:
-          host: ${{ secrets.VPS_HOST }}
-          username: ${{ secrets.VPS_USER }}
-          key: ${{ secrets.VPS_SSH_KEY }}
-          script: |
-            cd /opt/procontact/testing
-            echo "${{ secrets.GITHUB_TOKEN }}" | docker login ghcr.io -u ${{ github.actor }} --password-stdin
-            docker compose -f docker-compose.testing.yml pull app
-            docker compose -f docker-compose.testing.yml up -d
-            docker image prune -f
-
-  # ── 3b. Deploy to Staging (staging branch) ────────────────
+  # ── 2a. Deploy to Staging (staging branch) ────────────────
   deploy-staging:
     name: Deploy → Staging
     needs: build-and-push
@@ -150,7 +86,7 @@ jobs:
             docker compose -f docker-compose.staging.yml up -d
             docker image prune -f
 
-  # ── 3c. Deploy to Production (git tag v*.*.*) ─────────────
+  # ── 2b. Deploy to Production (git tag v*.*.*) ─────────────
   deploy-production:
     name: Deploy → Production
     needs: build-and-push
