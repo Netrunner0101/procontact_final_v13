@@ -1,5 +1,8 @@
 services:
   app:
+    build:
+      context: .
+      dockerfile: Dockerfile.production
     image: ghcr.io/netrunner0101/procontact_final_v13:latest
     restart: unless-stopped
     env_file: .env
