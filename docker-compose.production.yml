@@ -9,11 +9,6 @@ services:
         condition: service_healthy
     volumes:
       - app-storage:/var/www/html/storage/app
-    labels:
-      - "traefik.enable=true"
-      - "traefik.http.routers.production.rule=Host(`procontact.be`)"
-      - "traefik.http.routers.production.tls.certresolver=letsencrypt"
-      - "traefik.http.services.production.loadbalancer.server.port=80"
 
   postgres:
     image: postgres:16-alpine
