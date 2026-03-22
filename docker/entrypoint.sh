@@ -1,6 +1,9 @@
 #!/bin/sh
 set -e
 
+echo "==> Discovering packages..."
+php artisan package:discover --ansi
+
 echo "==> Running Laravel optimizations..."
 php artisan config:cache
 php artisan route:cache
