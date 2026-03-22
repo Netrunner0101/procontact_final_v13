@@ -49,6 +49,22 @@
                                 <i class="fas fa-briefcase"></i>
                                 <span>Activit&eacute;s</span>
                             </a>
+                            <a href="{{ route('contacts.manager') }}" class="nav-link {{ request()->routeIs('contacts.*') ? 'nav-link-active' : '' }}">
+                                <i class="fas fa-address-book"></i>
+                                <span>Contacts</span>
+                            </a>
+                            <a href="{{ route('appointments.manager') }}" class="nav-link {{ request()->routeIs('appointments.*') || request()->routeIs('rendez-vous.*') ? 'nav-link-active' : '' }}">
+                                <i class="fas fa-calendar-alt"></i>
+                                <span>Rendez-vous</span>
+                            </a>
+                            <a href="{{ route('notes.manager') }}" class="nav-link {{ request()->routeIs('notes.*') ? 'nav-link-active' : '' }}">
+                                <i class="fas fa-sticky-note"></i>
+                                <span>Notes</span>
+                            </a>
+                            <a href="{{ route('statistics.dashboard') }}" class="nav-link {{ request()->routeIs('statistics.*') || request()->routeIs('statistiques.*') ? 'nav-link-active' : '' }}">
+                                <i class="fas fa-chart-bar"></i>
+                                <span>Statistiques</span>
+                            </a>
                         </div>
                     </div>
 
@@ -123,6 +139,22 @@
                 <a href="{{ route('activites.index') }}" class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium" style="color: {{ request()->routeIs('activites.*') ? '#843728' : '#44483e' }}; background: {{ request()->routeIs('activites.*') ? 'rgba(255,219,209,0.3)' : 'transparent' }};">
                     <i class="fas fa-briefcase"></i>
                     Activit&eacute;s
+                </a>
+                <a href="{{ route('contacts.manager') }}" class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium" style="color: {{ request()->routeIs('contacts.*') ? '#843728' : '#44483e' }}; background: {{ request()->routeIs('contacts.*') ? 'rgba(255,219,209,0.3)' : 'transparent' }};">
+                    <i class="fas fa-address-book"></i>
+                    Contacts
+                </a>
+                <a href="{{ route('appointments.manager') }}" class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium" style="color: {{ request()->routeIs('appointments.*') || request()->routeIs('rendez-vous.*') ? '#843728' : '#44483e' }}; background: {{ request()->routeIs('appointments.*') || request()->routeIs('rendez-vous.*') ? 'rgba(255,219,209,0.3)' : 'transparent' }};">
+                    <i class="fas fa-calendar-alt"></i>
+                    Rendez-vous
+                </a>
+                <a href="{{ route('notes.manager') }}" class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium" style="color: {{ request()->routeIs('notes.*') ? '#843728' : '#44483e' }}; background: {{ request()->routeIs('notes.*') ? 'rgba(255,219,209,0.3)' : 'transparent' }};">
+                    <i class="fas fa-sticky-note"></i>
+                    Notes
+                </a>
+                <a href="{{ route('statistics.dashboard') }}" class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium" style="color: {{ request()->routeIs('statistics.*') || request()->routeIs('statistiques.*') ? '#843728' : '#44483e' }}; background: {{ request()->routeIs('statistics.*') || request()->routeIs('statistiques.*') ? 'rgba(255,219,209,0.3)' : 'transparent' }};">
+                    <i class="fas fa-chart-bar"></i>
+                    Statistiques
                 </a>
             </div>
             <div class="px-4 py-3" style="border-top: 1px solid #e9e6e3;">

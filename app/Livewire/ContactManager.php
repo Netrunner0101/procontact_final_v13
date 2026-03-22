@@ -37,7 +37,7 @@ class ContactManager extends Component
         'nom' => 'required|string|max:255',
         'prenom' => 'required|string|max:255',
         'email' => 'nullable|email|max:255',
-        'telephone' => 'nullable|string|max:20',
+        'telephone' => 'nullable|regex:/^[0-9+\-\s()]+$/|max:20',
         'adresse' => 'nullable|string|max:255',
         'ville' => 'nullable|string|max:100',
         'code_postal' => 'nullable|string|max:10',
