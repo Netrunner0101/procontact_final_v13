@@ -4,6 +4,8 @@ services:
     container_name: procontact-${ENV:-staging}-app
     restart: unless-stopped
     env_file: .env
+    ports:
+      - "${APP_PORT:-8082}:80"
     networks: [proxy, internal]
     depends_on:
       postgres:
