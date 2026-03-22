@@ -1,6 +1,8 @@
 name: Deploy to Staging
 
 on:
+  push:
+    branches: [master, staging]
   workflow_dispatch:
     inputs:
       reason:
@@ -69,8 +71,15 @@ jobs:
             set -e
             cd /opt/procontact/staging
 
+            # Login to GHCR using a PAT (GITHUB_TOKEN doesn't work over SSH)
+            echo "${{ secrets.GHCR_PAT }}" | docker login ghcr.io -u ${{ github.repository_owner }} --password-stdin
+
+            # Create .env from secret if provided
+            if [ -n "${{ secrets.STAGING_ENV }}" ]; then
+              echo '${{ secrets.STAGING_ENV }}' > .env
+            fi
+
             # Pull new image
-            echo "${{ secrets.GITHUB_TOKEN }}" | docker login ghcr.io -u ${{ github.actor }} --password-stdin
             IMAGE_TAG=${{ needs.build.outputs.image_tag }} docker compose pull app queue scheduler
 
             # Swap containers
