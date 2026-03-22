@@ -1,5 +1,8 @@
 services:
   app:
+    build:
+      context: ../..
+      dockerfile: docker/production/Dockerfile
     image: ghcr.io/netrunner0101/procontact_final_v13:${IMAGE_TAG:-latest}
     container_name: procontact-${ENV:-staging}-app
     restart: unless-stopped
@@ -19,7 +22,7 @@ services:
     environment:
       POSTGRES_DB: ${DB_DATABASE:-procontact}
       POSTGRES_USER: ${DB_USERNAME:-procontact}
-      POSTGRES_PASSWORD: ${DB_PASSWORD}
+      POSTGRES_PASSWORD: ${DB_PASSWORD:-secret}
     volumes:
       - pgdata:/var/lib/postgresql/data
     networks: [internal]
@@ -30,6 +33,9 @@ services:
       retries: 10
 
   queue:
+    build:
+      context: ../..
+      dockerfile: docker/production/Dockerfile
     image: ghcr.io/netrunner0101/procontact_final_v13:${IMAGE_TAG:-latest}
     command: php artisan queue:work --sleep=3 --tries=3
     restart: unless-stopped
@@ -40,6 +46,9 @@ services:
         condition: service_healthy
 
   scheduler:
+    build:
+      context: ../..
+      dockerfile: docker/production/Dockerfile
     image: ghcr.io/netrunner0101/procontact_final_v13:${IMAGE_TAG:-latest}
     command: sh -c "while true; do php artisan schedule:run; sleep 60; done"
     restart: unless-stopped
