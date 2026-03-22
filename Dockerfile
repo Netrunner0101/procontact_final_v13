@@ -1,10 +1,8 @@
 # ============================================
-# Dockerfile.production — Production environment
+# Dockerfile — Unified build (staging + production)
 # ============================================
 
-# ============================================
-# Stage 1: Composer dependencies
-# ============================================
+# ── Stage 1: Composer dependencies ──────────────
 FROM composer:2.8 AS composer-deps
 
 ENV COMPOSER_ALLOW_SUPERUSER=1
@@ -13,9 +11,7 @@ WORKDIR /app
 COPY composer.json composer.lock ./
 RUN composer install --no-dev --no-scripts --prefer-dist --optimize-autoloader --no-interaction --ignore-platform-req=php
 
-# ============================================
-# Stage 2: Node build (Vite + Tailwind)
-# ============================================
+# ── Stage 2: Node build (Vite + Tailwind) ───────
 FROM node:20-alpine AS node-build
 
 WORKDIR /app
@@ -23,10 +19,8 @@ COPY package.json package-lock.json vite.config.js ./
 COPY resources/ resources/
 RUN npm ci && npm run build
 
-# ============================================
-# Stage 3: Production image
-# ============================================
-FROM php:8.3-fpm-alpine AS production
+# ── Stage 3: Final image ────────────────────────
+FROM php:8.3-fpm-alpine
 
 # System dependencies
 RUN apk add --no-cache \
@@ -51,7 +45,7 @@ RUN apk add --no-cache --virtual .build-deps \
         intl \
     && apk del .build-deps
 
-# OPcache configuration (production: max performance, no revalidation)
+# OPcache configuration
 RUN echo "opcache.enable=1" >> /usr/local/etc/php/conf.d/opcache.ini \
     && echo "opcache.memory_consumption=256" >> /usr/local/etc/php/conf.d/opcache.ini \
     && echo "opcache.max_accelerated_files=20000" >> /usr/local/etc/php/conf.d/opcache.ini \
@@ -62,7 +56,7 @@ RUN echo "opcache.enable=1" >> /usr/local/etc/php/conf.d/opcache.ini \
 RUN echo "upload_max_filesize=50M" >> /usr/local/etc/php/conf.d/uploads.ini \
     && echo "post_max_size=50M" >> /usr/local/etc/php/conf.d/uploads.ini
 
-# PHP error reporting (production: hide errors, log only)
+# PHP error reporting (production-safe — override via .env for staging)
 RUN echo "display_errors=Off" >> /usr/local/etc/php/conf.d/errors.ini \
     && echo "error_reporting=E_ALL & ~E_DEPRECATED & ~E_STRICT" >> /usr/local/etc/php/conf.d/errors.ini \
     && echo "log_errors=On" >> /usr/local/etc/php/conf.d/errors.ini
@@ -79,8 +73,8 @@ COPY --from=node-build /app/public/build ./public/build
 # Copy Docker configs
 COPY docker/nginx.conf /etc/nginx/http.d/default.conf
 COPY docker/supervisord.conf /etc/supervisord.conf
-COPY docker/entrypoint.sh /entrypoint.sh
-RUN chmod +x /entrypoint.sh
+COPY docker/start.sh /start.sh
+RUN chmod +x /start.sh
 
 # Create required directories and set permissions
 RUN mkdir -p storage/framework/{cache,sessions,views} \
@@ -95,4 +89,4 @@ HEALTHCHECK --interval=30s --timeout=5s --start-period=10s --retries=3 \
 
 EXPOSE 80
 
-ENTRYPOINT ["/entrypoint.sh"]
+CMD ["/start.sh"]

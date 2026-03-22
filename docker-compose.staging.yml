@@ -1,38 +1,58 @@
 services:
   app:
-    build:
-      context: .
-      dockerfile: Dockerfile.staging
-    image: ghcr.io/netrunner0101/procontact_final_v13:staging
+    image: ghcr.io/netrunner0101/procontact_final_v13:${IMAGE_TAG:-staging-latest}
     restart: unless-stopped
     env_file: .env
-    ports:
-      - "8082:80"
+    networks: [proxy, internal]
     depends_on:
-      db:
+      postgres:
         condition: service_healthy
-    networks:
-      - procontact-staging
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.staging.rule=Host(`staging.procontact.be`)"
+      - "traefik.http.routers.staging.tls.certresolver=letsencrypt"
+      - "traefik.http.services.staging.loadbalancer.server.port=80"
 
-  db:
+  postgres:
     image: postgres:16-alpine
     restart: unless-stopped
     environment:
-      POSTGRES_DB: procontact_staging
-      POSTGRES_USER: procontact
-      POSTGRES_PASSWORD: ${DB_PASSWORD:-secret}
+      POSTGRES_DB: ${DB_DATABASE:-procontact_staging}
+      POSTGRES_USER: ${DB_USERNAME:-procontact}
+      POSTGRES_PASSWORD: ${DB_PASSWORD}
     volumes:
       - pgdata-staging:/var/lib/postgresql/data
+    networks: [internal]
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U procontact -d procontact_staging"]
-      interval: 10s
+      test: ["CMD-SHELL", "pg_isready -U $${POSTGRES_USER} -d $${POSTGRES_DB}"]
+      interval: 5s
       timeout: 5s
-      retries: 5
-    networks:
-      - procontact-staging
+      retries: 10
+
+  queue:
+    image: ghcr.io/netrunner0101/procontact_final_v13:${IMAGE_TAG:-staging-latest}
+    command: php artisan queue:work --sleep=3 --tries=3
+    restart: unless-stopped
+    env_file: .env
+    networks: [internal]
+    depends_on:
+      postgres:
+        condition: service_healthy
+
+  scheduler:
+    image: ghcr.io/netrunner0101/procontact_final_v13:${IMAGE_TAG:-staging-latest}
+    command: sh -c "while true; do php artisan schedule:run; sleep 60; done"
+    restart: unless-stopped
+    env_file: .env
+    networks: [internal]
+    depends_on:
+      postgres:
+        condition: service_healthy
 
 volumes:
   pgdata-staging:
 
 networks:
-  procontact-staging:
+  proxy:
+    external: true
+  internal:

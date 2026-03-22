@@ -1,0 +1,91 @@
+name: Deploy to Staging
+
+on:
+  workflow_dispatch:
+    inputs:
+      reason:
+        description: 'Why are you deploying? (optional note)'
+        required: false
+        default: 'Manual deploy'
+
+env:
+  REGISTRY: ghcr.io
+  IMAGE_NAME: ${{ github.repository }}
+
+jobs:
+  build:
+    name: Build Docker Image
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: write
+    outputs:
+      image_tag: ${{ steps.tag.outputs.tag }}
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set image tag
+        id: tag
+        run: echo "tag=staging-$(git rev-parse --short HEAD)" >> $GITHUB_OUTPUT
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Log in to GHCR
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Build and push
+        uses: docker/build-push-action@v6
+        with:
+          context: .
+          push: true
+          tags: |
+            ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ steps.tag.outputs.tag }}
+            ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:staging-latest
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
+
+  deploy:
+    name: Deploy → Staging
+    runs-on: ubuntu-latest
+    needs: build
+    environment: staging
+
+    steps:
+      - name: Deploy via SSH
+        uses: appleboy/ssh-action@v1
+        with:
+          host: ${{ secrets.VPS_HOST }}
+          username: ${{ secrets.VPS_USER }}
+          key: ${{ secrets.SSH_PRIVATE_KEY }}
+          command_timeout: 10m
+          script: |
+            set -e
+            cd /opt/procontact/staging
+
+            # Pull new image
+            echo "${{ secrets.GITHUB_TOKEN }}" | docker login ghcr.io -u ${{ github.actor }} --password-stdin
+            IMAGE_TAG=${{ needs.build.outputs.image_tag }} docker compose pull app queue scheduler
+
+            # Swap containers
+            IMAGE_TAG=${{ needs.build.outputs.image_tag }} docker compose up -d \
+              --no-deps \
+              --remove-orphans \
+              app queue scheduler
+
+            # Wait for app to be up (max 30s)
+            timeout 30 sh -c 'until docker compose exec -T app php artisan --version; do sleep 2; done'
+
+            # Run migrations safely
+            docker compose exec -T app php artisan migrate --force
+
+            # Cleanup old images
+            docker image prune -f
+
+            echo "Staging deploy done — ${{ needs.build.outputs.image_tag }}"
