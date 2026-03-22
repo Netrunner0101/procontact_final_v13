@@ -1,55 +1,57 @@
 services:
-  app:
-    image: ghcr.io/netrunner0101/procontact_final_v13:${IMAGE_TAG:-staging-latest}
-    restart: unless-stopped
-    env_file: .env
-    ports:
-      - "8082:80"
-    networks: [proxy, internal]
-    depends_on:
-      postgres:
-        condition: service_healthy
-
-  postgres:
-    image: postgres:16-alpine
-    restart: unless-stopped
-    environment:
-      POSTGRES_DB: ${DB_DATABASE:-procontact_staging}
-      POSTGRES_USER: ${DB_USERNAME:-procontact}
-      POSTGRES_PASSWORD: ${DB_PASSWORD}
-    volumes:
-      - pgdata-staging:/var/lib/postgresql/data
-    networks: [internal]
-    healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U $${POSTGRES_USER} -d $${POSTGRES_DB}"]
-      interval: 5s
-      timeout: 5s
-      retries: 10
-
-  queue:
-    image: ghcr.io/netrunner0101/procontact_final_v13:${IMAGE_TAG:-staging-latest}
-    command: php artisan queue:work --sleep=3 --tries=3
-    restart: unless-stopped
-    env_file: .env
-    networks: [internal]
-    depends_on:
-      postgres:
-        condition: service_healthy
-
-  scheduler:
-    image: ghcr.io/netrunner0101/procontact_final_v13:${IMAGE_TAG:-staging-latest}
-    command: sh -c "while true; do php artisan schedule:run; sleep 60; done"
-    restart: unless-stopped
-    env_file: .env
-    networks: [internal]
-    depends_on:
-      postgres:
-        condition: service_healthy
-
-volumes:
-  pgdata-staging:
-
+    laravel.test:
+        build:
+            context: './vendor/laravel/sail/runtimes/8.3'
+            dockerfile: Dockerfile
+            args:
+                WWWGROUP: '${WWWGROUP}'
+        image: 'sail-8.3/app'
+        extra_hosts:
+            - 'host.docker.internal:host-gateway'
+        ports:
+            - '${APP_PORT:-80}:80'
+            - '${VITE_PORT:-5173}:${VITE_PORT:-5173}'
+        environment:
+            WWWUSER: '${WWWUSER}'
+            LARAVEL_SAIL: 1
+            XDEBUG_MODE: '${SAIL_XDEBUG_MODE:-off}'
+            XDEBUG_CONFIG: '${SAIL_XDEBUG_CONFIG:-client_host=host.docker.internal}'
+            IGNITION_LOCAL_SITES_PATH: '${PWD}'
+        volumes:
+            - '.:/var/www/html'
+        networks:
+            - sail
+        depends_on:
+            pgsql:
+                condition: service_healthy
+    pgsql:
+        image: 'postgres:16'
+        ports:
+            - '${FORWARD_DB_PORT:-5432}:5432'
+        environment:
+            PGPASSWORD: '${DB_PASSWORD:-secret}'
+            POSTGRES_DB: '${DB_DATABASE}'
+            POSTGRES_USER: '${DB_USERNAME}'
+            POSTGRES_PASSWORD: '${DB_PASSWORD:-secret}'
+        volumes:
+            - 'sail-pgsql:/var/lib/postgresql/data'
+            - './vendor/laravel/sail/database/pgsql/create-testing-database.sql:/docker-entrypoint-initdb.d/10-create-testing-database.sql'
+        networks:
+            - sail
+        healthcheck:
+            test:
+                - CMD
+                - pg_isready
+                - '-q'
+                - '-d'
+                - '${DB_DATABASE}'
+                - '-U'
+                - '${DB_USERNAME}'
+            retries: 3
+            timeout: 5s
 networks:
-  proxy:
-    external: true
-  internal:
+    sail:
+        driver: bridge
+volumes:
+    sail-pgsql:
+        driver: local
