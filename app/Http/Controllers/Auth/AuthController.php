@@ -89,6 +89,7 @@ class AuthController extends Controller
             'nom' => 'required|string|max:255',
             'prenom' => 'required|string|max:255',
             'email' => 'required|string|email|max:255|unique:users',
+            'telephone' => 'nullable|string|max:255',
             'password' => 'required|string|min:8|confirmed',
         ]);
 
@@ -98,12 +99,10 @@ class AuthController extends Controller
             'nom' => $validated['nom'],
             'prenom' => $validated['prenom'],
             'email' => $validated['email'],
-            'password' => Hash::make($validated['password']),
+            'telephone' => $validated['telephone'] ?? null,
+            'password' => $validated['password'],
+            'role_id' => $adminRole->id,
         ]);
-
-        // Entrepreneur gets admin role by default
-        $user->role_id = $adminRole->id;
-        $user->save();
 
         Auth::login($user);
 
