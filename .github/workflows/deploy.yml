@@ -79,12 +79,36 @@ jobs:
           host: ${{ secrets.VPS_HOST }}
           username: ${{ secrets.VPS_USER }}
           key: ${{ secrets.VPS_SSH_KEY }}
+          command_timeout: 10m
           script: |
-            cd /opt/procontact/staging
+            set -e
+            echo "▸ Logging in to GHCR..."
             echo "${{ secrets.GITHUB_TOKEN }}" | docker login ghcr.io -u ${{ github.actor }} --password-stdin
+
+            # Auto-setup: clone repo if first deploy
+            if [ ! -d /opt/procontact/staging ]; then
+              echo "▸ First deploy — cloning repository..."
+              mkdir -p /opt/procontact
+              git clone --branch staging --single-branch \
+                https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/${{ github.repository }}.git \
+                /opt/procontact/staging
+            fi
+
+            cd /opt/procontact/staging
+            echo "▸ Pulling latest code..."
+            git fetch origin staging
+            git reset --hard origin/staging
+
+            echo "▸ Pulling Docker image..."
             docker compose -f docker-compose.staging.yml pull app
+
+            echo "▸ Starting containers..."
             docker compose -f docker-compose.staging.yml up -d
+
+            echo "▸ Cleaning up old images..."
             docker image prune -f
+
+            echo "✓ Staging deploy complete"
 
   # ── 2b. Deploy to Production (git tag v*.*.*) ─────────────
   deploy-production:
