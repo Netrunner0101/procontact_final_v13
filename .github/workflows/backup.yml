@@ -28,7 +28,7 @@ jobs:
               | gzip > $BACKUP_DIR/production-$TIMESTAMP.sql.gz
 
             # Staging backup
-            docker compose -f /opt/procontact/staging/docker-compose.staging.yml exec -T db \
+            docker compose -f /opt/procontact/staging/docker-compose.yml exec -T postgres \
               pg_dump -U procontact procontact_staging \
               | gzip > $BACKUP_DIR/staging-$TIMESTAMP.sql.gz
 
