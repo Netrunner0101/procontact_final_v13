@@ -1,41 +1,61 @@
 services:
   app:
-    build:
-      context: .
-      dockerfile: Dockerfile.production
-    image: ghcr.io/netrunner0101/procontact_final_v13:latest
+    image: ghcr.io/netrunner0101/procontact_final_v13:${IMAGE_TAG:-production-latest}
     restart: unless-stopped
     env_file: .env
-    ports:
-      - "8083:80"
+    networks: [proxy, internal]
     depends_on:
-      db:
+      postgres:
         condition: service_healthy
     volumes:
       - app-storage:/var/www/html/storage/app
-    networks:
-      - procontact-production
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.production.rule=Host(`procontact.be`)"
+      - "traefik.http.routers.production.tls.certresolver=letsencrypt"
+      - "traefik.http.services.production.loadbalancer.server.port=80"
 
-  db:
+  postgres:
     image: postgres:16-alpine
     restart: unless-stopped
     environment:
-      POSTGRES_DB: procontact_production
-      POSTGRES_USER: procontact
+      POSTGRES_DB: ${DB_DATABASE:-procontact_production}
+      POSTGRES_USER: ${DB_USERNAME:-procontact}
       POSTGRES_PASSWORD: ${DB_PASSWORD}
     volumes:
       - pgdata-production:/var/lib/postgresql/data
+    networks: [internal]
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U procontact -d procontact_production"]
-      interval: 10s
+      test: ["CMD-SHELL", "pg_isready -U $${POSTGRES_USER} -d $${POSTGRES_DB}"]
+      interval: 5s
       timeout: 5s
-      retries: 5
-    networks:
-      - procontact-production
+      retries: 10
+
+  queue:
+    image: ghcr.io/netrunner0101/procontact_final_v13:${IMAGE_TAG:-production-latest}
+    command: php artisan queue:work --sleep=3 --tries=3
+    restart: unless-stopped
+    env_file: .env
+    networks: [internal]
+    depends_on:
+      postgres:
+        condition: service_healthy
+
+  scheduler:
+    image: ghcr.io/netrunner0101/procontact_final_v13:${IMAGE_TAG:-production-latest}
+    command: sh -c "while true; do php artisan schedule:run; sleep 60; done"
+    restart: unless-stopped
+    env_file: .env
+    networks: [internal]
+    depends_on:
+      postgres:
+        condition: service_healthy
 
 volumes:
   pgdata-production:
   app-storage:
 
 networks:
-  procontact-production:
+  proxy:
+    external: true
+  internal:
