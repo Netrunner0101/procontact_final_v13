@@ -10,34 +10,6 @@ use Illuminate\Support\Facades\Auth;
 class ClientPortalController extends Controller
 {
     /**
-     * Display the client portal dashboard.
-     */
-    public function dashboard()
-    {
-        $user = Auth::user();
-
-        $upcomingAppointments = $user->visibleRendezVous()
-            ->with(['contact', 'activite'])
-            ->where('date_debut', '>=', now()->toDateString())
-            ->orderBy('date_debut', 'asc')
-            ->orderBy('heure_debut', 'asc')
-            ->limit(5)
-            ->get();
-
-        $pastAppointmentsCount = $user->visibleRendezVous()
-            ->where('date_debut', '<', now()->toDateString())
-            ->count();
-
-        $totalAppointmentsCount = $user->visibleRendezVous()->count();
-
-        return view('portal.dashboard', compact(
-            'upcomingAppointments',
-            'pastAppointmentsCount',
-            'totalAppointmentsCount'
-        ));
-    }
-
-    /**
      * Display all appointments for the client.
      */
     public function appointments(Request $request)

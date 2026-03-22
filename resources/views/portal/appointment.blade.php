@@ -5,8 +5,6 @@
 @section('content')
 <!-- Breadcrumb -->
 <div class="flex items-center gap-2 mb-8 text-[10px] uppercase tracking-widest font-bold text-stone-400">
-<a href="{{ route('client.portal.dashboard') }}" class="hover:text-primary transition-colors">Dashboard</a>
-<span>/</span>
 <a href="{{ route('client.portal.appointments') }}" class="hover:text-primary transition-colors">Appointments</a>
 <span>/</span>
 <span class="text-primary">{{ Str::limit($rendezVous->titre, 30) }}</span>

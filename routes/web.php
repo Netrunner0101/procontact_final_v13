@@ -141,7 +141,7 @@ Route::middleware(['auth', 'client'])->prefix('client')->name('client.')->group(
 
 // Client Portal (new sidebar layout — appointments + notes only)
 Route::middleware(['auth', 'client'])->prefix('portal')->name('client.portal.')->group(function () {
-    Route::get('/dashboard', [ClientPortalController::class, 'dashboard'])->name('dashboard');
+    Route::get('/', [ClientPortalController::class, 'appointments'])->name('index');
     Route::get('/appointments', [ClientPortalController::class, 'appointments'])->name('appointments');
     Route::get('/appointment/{rendezVous}', [ClientPortalController::class, 'showAppointment'])->name('appointment');
 

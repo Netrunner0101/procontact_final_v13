@@ -101,11 +101,7 @@
 <p class="text-[10px] text-secondary mt-1 tracking-[0.2em] font-bold opacity-70">CLIENT PORTAL</p>
 </div>
 <nav class="flex-1 space-y-1">
-<a class="flex items-center gap-3 px-3 py-2.5 rounded transition-all duration-200 @if(request()->routeIs('client.portal.dashboard')) text-[#A24E3D] font-bold border-r-4 border-[#A24E3D] bg-white scale-95 @else text-stone-500 hover:text-stone-900 hover:bg-stone-200/50 @endif" href="{{ route('client.portal.dashboard') }}">
-<span class="material-symbols-outlined">dashboard</span>
-<span class="text-sm">Dashboard</span>
-</a>
-<a class="flex items-center gap-3 px-3 py-2.5 rounded transition-all duration-200 @if(request()->routeIs('client.portal.appointments') || request()->routeIs('client.portal.appointment')) text-[#A24E3D] font-bold border-r-4 border-[#A24E3D] bg-white scale-95 @else text-stone-500 hover:text-stone-900 hover:bg-stone-200/50 @endif" href="{{ route('client.portal.appointments') }}">
+<a class="flex items-center gap-3 px-3 py-2.5 rounded transition-all duration-200 @if(request()->routeIs('client.portal.appointments') || request()->routeIs('client.portal.index') || request()->routeIs('client.portal.appointment')) text-[#A24E3D] font-bold border-r-4 border-[#A24E3D] bg-white scale-95 @else text-stone-500 hover:text-stone-900 hover:bg-stone-200/50 @endif" href="{{ route('client.portal.appointments') }}">
 <span class="material-symbols-outlined">event_available</span>
 <span class="text-sm">My Appointments</span>
 </a>
@@ -142,7 +138,7 @@
 </div>
 <nav class="hidden lg:flex gap-8">
 <a class="font-manrope text-sm font-semibold text-[#A24E3D]" href="#">Direct Dial</a>
-<a class="font-manrope text-sm font-medium text-stone-500 hover:text-[#A24E3D] transition-all" href="{{ route('client.portal.dashboard') }}">Client Portal</a>
+<a class="font-manrope text-sm font-medium text-stone-500 hover:text-[#A24E3D] transition-all" href="{{ route('client.portal.appointments') }}">Client Portal</a>
 </nav>
 </div>
 <div class="flex items-center gap-4">
@@ -188,13 +184,9 @@
 
 <!-- Mobile Bottom Navigation -->
 <nav class="md:hidden fixed bottom-0 left-0 right-0 bg-white border-t border-stone-100 h-20 flex items-center justify-around px-4 z-50 glass-nav shadow-inner">
-<a class="flex flex-col items-center @if(request()->routeIs('client.portal.dashboard')) text-primary @else text-stone-400 @endif" href="{{ route('client.portal.dashboard') }}">
-<span class="material-symbols-outlined" @if(request()->routeIs('client.portal.dashboard')) style="font-variation-settings: 'FILL' 1;" @endif>dashboard</span>
-<span class="text-[9px] font-bold uppercase tracking-widest mt-1">Home</span>
-</a>
-<a class="flex flex-col items-center @if(request()->routeIs('client.portal.appointments') || request()->routeIs('client.portal.appointment')) text-primary @else text-stone-400 @endif" href="{{ route('client.portal.appointments') }}">
-<span class="material-symbols-outlined" @if(request()->routeIs('client.portal.appointments')) style="font-variation-settings: 'FILL' 1;" @endif>event</span>
-<span class="text-[9px] font-bold uppercase tracking-widest mt-1">Calendar</span>
+<a class="flex flex-col items-center @if(request()->routeIs('client.portal.appointments') || request()->routeIs('client.portal.index') || request()->routeIs('client.portal.appointment')) text-primary @else text-stone-400 @endif" href="{{ route('client.portal.appointments') }}">
+<span class="material-symbols-outlined" @if(request()->routeIs('client.portal.appointments') || request()->routeIs('client.portal.index')) style="font-variation-settings: 'FILL' 1;" @endif>event</span>
+<span class="text-[9px] font-bold uppercase tracking-widest mt-1">Appointments</span>
 </a>
 <a class="flex flex-col items-center text-stone-400" href="#">
 <span class="material-symbols-outlined">account_circle</span>
