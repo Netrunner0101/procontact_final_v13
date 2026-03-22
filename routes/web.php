@@ -12,6 +12,7 @@ use App\Http\Controllers\ClientController;
 use App\Http\Controllers\ClientManagementController;
 use App\Http\Controllers\SocialAuthController;
 use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\ClientPortalController;
 use App\Http\Controllers\MockOAuthController;
 
 Route::get('/', function () {
@@ -48,6 +49,21 @@ Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'show'])->name('profile.show');
     Route::put('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::put('/profile/password', [ProfileController::class, 'updatePassword'])->name('profile.password');
+});
+
+// Executive views (sidebar layout)
+Route::middleware(['auth', 'admin'])->prefix('executive')->name('executive.')->group(function () {
+    Route::get('/dashboard', function () {
+        return view('executive.dashboard');
+    })->name('dashboard');
+
+    Route::get('/contacts', function () {
+        return view('executive.contacts');
+    })->name('contacts');
+
+    Route::get('/scheduler', function () {
+        return view('executive.scheduler');
+    })->name('scheduler');
 });
 
 // Admin routes (protected for admin users only)
@@ -116,11 +132,23 @@ Route::middleware(['auth', 'admin'])->group(function () {
     });
 });
 
-// Client routes (for client users)
+// Client routes (for client users) — legacy
 Route::middleware(['auth', 'client'])->prefix('client')->name('client.')->group(function () {
     Route::get('/dashboard', [ClientController::class, 'dashboard'])->name('dashboard');
     Route::get('/appointments', [ClientController::class, 'appointments'])->name('appointments');
     Route::get('/appointment/{rendezVous}', [ClientController::class, 'showAppointment'])->name('appointment');
+});
+
+// Client Portal (new sidebar layout — appointments + notes only)
+Route::middleware(['auth', 'client'])->prefix('portal')->name('client.portal.')->group(function () {
+    Route::get('/', [ClientPortalController::class, 'appointments'])->name('index');
+    Route::get('/appointments', [ClientPortalController::class, 'appointments'])->name('appointments');
+    Route::get('/appointment/{rendezVous}', [ClientPortalController::class, 'showAppointment'])->name('appointment');
+
+    // Client notes CRUD (create, update, delete only own notes)
+    Route::post('/appointment/{rendezVous}/notes', [ClientPortalController::class, 'storeNote'])->name('notes.store');
+    Route::put('/appointment/{rendezVous}/notes/{note}', [ClientPortalController::class, 'updateNote'])->name('notes.update');
+    Route::delete('/appointment/{rendezVous}/notes/{note}', [ClientPortalController::class, 'destroyNote'])->name('notes.destroy');
 });
 
 
