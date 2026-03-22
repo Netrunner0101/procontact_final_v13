@@ -50,6 +50,21 @@ Route::middleware('auth')->group(function () {
     Route::put('/profile/password', [ProfileController::class, 'updatePassword'])->name('profile.password');
 });
 
+// Executive views (sidebar layout)
+Route::middleware(['auth', 'admin'])->prefix('executive')->name('executive.')->group(function () {
+    Route::get('/dashboard', function () {
+        return view('executive.dashboard');
+    })->name('dashboard');
+
+    Route::get('/contacts', function () {
+        return view('executive.contacts');
+    })->name('contacts');
+
+    Route::get('/scheduler', function () {
+        return view('executive.scheduler');
+    })->name('scheduler');
+});
+
 // Admin routes (protected for admin users only)
 Route::middleware(['auth', 'admin'])->group(function () {
     // Dashboard - now using Livewire
