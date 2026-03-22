@@ -104,6 +104,10 @@
                     @else
                         <a href="{{ route('client.dashboard') }}" class="hidden md:block font-medium px-4 py-2 rounded-lg transition-all" style="color: var(--on-surface-variant);">Mon Espace</a>
                     @endif
+                    <form method="POST" action="{{ route('logout') }}">
+                        @csrf
+                        <button type="submit" class="font-medium px-4 py-2 rounded-lg transition-all hover:opacity-80" style="color: var(--primary);">Déconnexion</button>
+                    </form>
                 @else
                     <a href="{{ route('login') }}" class="hidden md:block font-medium px-4 py-2 rounded-lg transition-all hover:opacity-80" style="color: var(--on-surface-variant);">Connexion</a>
                     <a href="{{ route('register') }}" class="landing-btn-primary text-white px-6 py-2.5 rounded-xl font-semibold" style="font-family: 'Manrope', sans-serif;">Démarrer</a>
