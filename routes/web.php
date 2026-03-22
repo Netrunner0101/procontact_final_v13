@@ -12,6 +12,7 @@ use App\Http\Controllers\ClientController;
 use App\Http\Controllers\ClientManagementController;
 use App\Http\Controllers\SocialAuthController;
 use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\ClientPortalController;
 use App\Http\Controllers\MockOAuthController;
 
 Route::get('/', function () {
@@ -131,11 +132,23 @@ Route::middleware(['auth', 'admin'])->group(function () {
     });
 });
 
-// Client routes (for client users)
+// Client routes (for client users) — legacy
 Route::middleware(['auth', 'client'])->prefix('client')->name('client.')->group(function () {
     Route::get('/dashboard', [ClientController::class, 'dashboard'])->name('dashboard');
     Route::get('/appointments', [ClientController::class, 'appointments'])->name('appointments');
     Route::get('/appointment/{rendezVous}', [ClientController::class, 'showAppointment'])->name('appointment');
+});
+
+// Client Portal (new sidebar layout — appointments + notes only)
+Route::middleware(['auth', 'client'])->prefix('portal')->name('client.portal.')->group(function () {
+    Route::get('/dashboard', [ClientPortalController::class, 'dashboard'])->name('dashboard');
+    Route::get('/appointments', [ClientPortalController::class, 'appointments'])->name('appointments');
+    Route::get('/appointment/{rendezVous}', [ClientPortalController::class, 'showAppointment'])->name('appointment');
+
+    // Client notes CRUD (create, update, delete only own notes)
+    Route::post('/appointment/{rendezVous}/notes', [ClientPortalController::class, 'storeNote'])->name('notes.store');
+    Route::put('/appointment/{rendezVous}/notes/{note}', [ClientPortalController::class, 'updateNote'])->name('notes.update');
+    Route::delete('/appointment/{rendezVous}/notes/{note}', [ClientPortalController::class, 'destroyNote'])->name('notes.destroy');
 });
 
 
