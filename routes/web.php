@@ -106,7 +106,6 @@ Route::middleware(['auth', 'admin'])->group(function () {
     
     // Email appointment details
     Route::post('rendez-vous/{rendezVous}/email', [RendezVousController::class, 'email'])->name('rendez-vous.email');
-    Route::post('/rendez-vous/{rendezVous}/send-email', [RendezVousController::class, 'sendEmail'])->name('rendez-vous.send-email');
 
     // Reminder routes
     Route::resource('rappels', RappelController::class);
@@ -150,7 +149,5 @@ Route::middleware(['auth', 'client'])->prefix('portal')->name('client.portal.')-
     Route::put('/appointment/{rendezVous}/notes/{note}', [ClientPortalController::class, 'updateNote'])->name('notes.update');
     Route::delete('/appointment/{rendezVous}/notes/{note}', [ClientPortalController::class, 'destroyNote'])->name('notes.destroy');
 });
-
-
 
 require __DIR__.'/auth.php';
