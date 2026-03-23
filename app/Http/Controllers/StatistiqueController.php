@@ -7,7 +7,6 @@ use App\Models\Activite;
 use App\Models\RendezVous;
 use App\Models\Rappel;
 use App\Models\Note;
-use App\Models\Statistique;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;

@@ -13,7 +13,7 @@ class NoteController extends Controller
 {
     public function index()
     {
-        $notes = Note::with(['contact', 'activite', 'rendezVous'])
+        $notes = Note::with(['activite', 'rendezVous'])
             ->where('user_id', Auth::id())
             ->orderBy('created_at', 'desc')
             ->paginate(15);
@@ -60,7 +60,7 @@ class NoteController extends Controller
     {
         $validated = $request->validate([
             'titre' => 'required|string|max:255',
-            'contenu' => 'required|string',
+            'commentaire' => 'required|string',
             'contact_id' => 'nullable|exists:contacts,id',
             'activite_id' => 'nullable|exists:activites,id',
             'rendez_vous_id' => 'nullable|exists:rendez_vous,id',
@@ -95,7 +95,7 @@ class NoteController extends Controller
             abort(403);
         }
         
-        $note->load(['contact', 'activite', 'rendezVous']);
+        $note->load(['activite', 'rendezVous']);
         return view('notes.show', compact('note'));
     }
 
@@ -125,7 +125,7 @@ class NoteController extends Controller
         
         $validated = $request->validate([
             'titre' => 'required|string|max:255',
-            'contenu' => 'required|string',
+            'commentaire' => 'required|string',
             'contact_id' => 'nullable|exists:contacts,id',
             'activite_id' => 'nullable|exists:activites,id',
             'rendez_vous_id' => 'nullable|exists:rendez_vous,id',
