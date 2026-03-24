@@ -32,14 +32,21 @@ git clone https://github.com/netrunner0101/procontact_final_v13.git .
 docker network create services-network || true
 ```
 
-## 4. Create staging DB (option A — reuse existing Postgres)
+## 4. Existing database
+
+The staging app connects to the existing `procontact-db` container (PostgreSQL 16-alpine) which already hosts:
+
+| Database | Purpose |
+|----------|---------|
+| `procontact_staging` | Staging app uses this (seeded with test data) |
+| `procontact_production` | Migrated, empty, ready for production |
+| `procontact` | Old DB (previous data still here) |
+
+Make sure `procontact-db` is running and connected to `services-network`:
 
 ```bash
-# If you want to reuse an existing Postgres container instead of the compose one:
-docker exec -it production-postgres-1 psql -U laravel -c "CREATE DATABASE procontact_staging;"
+docker network connect services-network procontact-db || true
 ```
-
-> **Note:** The `docker-compose.yml` already includes a dedicated `staging-postgres` container, so option A is only needed if you prefer to share the production Postgres instance.
 
 ## 5. Docker files
 
@@ -49,7 +56,7 @@ All staging Docker files are located in `docker/staging/`:
 |------|---------|
 | `docker/staging/Dockerfile` | PHP 8.3-FPM with PostgreSQL extensions |
 | `docker/staging/nginx.conf` | Nginx config pointing to PHP-FPM |
-| `docker/staging/docker-compose.yml` | Three services: app, nginx, postgres |
+| `docker/staging/docker-compose.yml` | Two services: app + nginx (uses existing procontact-db) |
 
 ## 6. Environment file
 
@@ -122,7 +129,7 @@ docker compose -f docker/staging/docker-compose.yml down -v
 
 ## Notes
 
-- This staging stack (`laravel-staging` + `staging-postgres`) is **separate** from the production ProContact services.
-- It can run alongside `production-postgres-1` and the main `procontact_final_v13` containers without conflict.
-- Port **8083** is used to avoid conflicts with production (port 80).
-- The `services-network` external network allows containers to communicate across compose files if needed.
+- The staging app (`laravel-staging` + `nginx-staging`) connects to the existing `procontact-db` container using the `procontact_staging` database.
+- No duplicate postgres container is created — all databases live in `procontact-db`.
+- Port **8083** is used to avoid conflicts with the main app on port 80.
+- The `services-network` external network allows containers to communicate across compose files.
