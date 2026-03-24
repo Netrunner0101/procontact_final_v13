@@ -12,7 +12,7 @@ services:
       - ../..:/var/www/html
     environment:
       DB_CONNECTION: pgsql
-      DB_HOST: postgres
+      DB_HOST: procontact-db
       DB_PORT: 5432
       DB_DATABASE: procontact_staging
       DB_USERNAME: laravel
@@ -33,21 +33,6 @@ services:
     networks:
       - services-network
 
-  postgres:
-    image: postgres:16-alpine
-    container_name: staging-postgres
-    environment:
-      POSTGRES_USER: laravel
-      POSTGRES_PASSWORD: mysecret
-      POSTGRES_DB: procontact_staging
-    volumes:
-      - pgdata:/var/lib/postgresql/data
-    networks:
-      - services-network
-
 networks:
   services-network:
     external: true
-
-volumes:
-  pgdata:
