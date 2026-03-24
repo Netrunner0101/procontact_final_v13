@@ -159,8 +159,8 @@ class ClientManagementController extends Controller
             'telephone' => $validated['telephone'],
         ];
 
-        if ($validated['password']) {
-            $updateData['password'] = Hash::make($validated['password']);
+        if (!empty($validated['password'])) {
+            $updateData['password'] = $validated['password'];
         }
 
         $client->update($updateData);
