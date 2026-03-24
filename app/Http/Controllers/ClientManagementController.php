@@ -73,7 +73,7 @@ class ClientManagementController extends Controller
             'nom' => $validated['nom'],
             'prenom' => $validated['prenom'],
             'email' => $validated['email'],
-            'password' => Hash::make($validated['password']),
+            'password' => $validated['password'],
             'telephone' => $validated['telephone'],
         ]);
 

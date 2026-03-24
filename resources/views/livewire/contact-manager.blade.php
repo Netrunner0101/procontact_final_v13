@@ -178,9 +178,9 @@
                         </div>
 
                         <div class="form-group full-width">
-                            <label for="adresse" class="form-label">Adresse</label>
-                            <input type="text" id="adresse" wire:model="adresse" class="form-input">
-                            @error('adresse') <span class="error-message">{{ $message }}</span> @enderror
+                            <label for="rue" class="form-label">Adresse</label>
+                            <input type="text" id="rue" wire:model="rue" class="form-input">
+                            @error('rue') <span class="error-message">{{ $message }}</span> @enderror
                         </div>
 
                         <div class="form-group">
@@ -212,11 +212,6 @@
                             @error('status_id') <span class="error-message">{{ $message }}</span> @enderror
                         </div>
 
-                        <div class="form-group full-width">
-                            <label for="notes" class="form-label">Notes</label>
-                            <textarea id="notes" wire:model="notes" class="form-textarea" rows="3"></textarea>
-                            @error('notes') <span class="error-message">{{ $message }}</span> @enderror
-                        </div>
                     </div>
 
                     <div class="modal-actions">

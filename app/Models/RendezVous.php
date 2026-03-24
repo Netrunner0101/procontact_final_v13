@@ -23,6 +23,9 @@ class RendezVous extends Model
         'date_fin',
         'heure_debut',
         'heure_fin',
+        'statut',
+        'lieu',
+        'notes',
     ];
 
     protected $casts = [
