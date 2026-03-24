@@ -26,22 +26,24 @@ class ContactManager extends Component
     public $prenom = '';
     public $email = '';
     public $telephone = '';
-    public $rue = '';
+    public $adresse = '';
     public $ville = '';
     public $code_postal = '';
     public $pays = 'France';
     public $status_id = '';
+    public $notes = '';
 
     protected $rules = [
         'nom' => 'required|string|max:255',
         'prenom' => 'required|string|max:255',
         'email' => 'nullable|email|max:255',
-        'telephone' => 'nullable|regex:/^[0-9+\-\s()]+$/|max:20',
-        'rue' => 'nullable|string|max:255',
+        'telephone' => 'nullable|string|max:20',
+        'adresse' => 'nullable|string|max:255',
         'ville' => 'nullable|string|max:100',
         'code_postal' => 'nullable|string|max:10',
         'pays' => 'nullable|string|max:100',
         'status_id' => 'required|exists:statuses,id',
+        'notes' => 'nullable|string',
     ];
 
     public function mount()
@@ -102,23 +104,19 @@ class ContactManager extends Component
     {
         $this->validate();
 
-        $contact = Contact::create([
+        Contact::create([
             'nom' => $this->nom,
             'prenom' => $this->prenom,
-            'rue' => $this->rue,
+            'email' => $this->email,
+            'telephone' => $this->telephone,
+            'adresse' => $this->adresse,
             'ville' => $this->ville,
             'code_postal' => $this->code_postal,
             'pays' => $this->pays,
             'status_id' => $this->status_id,
+            'notes' => $this->notes,
             'user_id' => Auth::id(),
         ]);
-
-        if ($this->email) {
-            $contact->emails()->create(['email' => $this->email]);
-        }
-        if ($this->telephone) {
-            $contact->numeroTelephones()->create(['numero_telephone' => $this->telephone]);
-        }
 
         $this->closeModals();
         session()->flash('success', 'Contact créé avec succès!');
@@ -131,36 +129,15 @@ class ContactManager extends Component
         $this->selectedContact->update([
             'nom' => $this->nom,
             'prenom' => $this->prenom,
-            'rue' => $this->rue,
+            'email' => $this->email,
+            'telephone' => $this->telephone,
+            'adresse' => $this->adresse,
             'ville' => $this->ville,
             'code_postal' => $this->code_postal,
             'pays' => $this->pays,
             'status_id' => $this->status_id,
+            'notes' => $this->notes,
         ]);
-
-        // Update or create email
-        $existingEmail = $this->selectedContact->emails()->first();
-        if ($this->email) {
-            if ($existingEmail) {
-                $existingEmail->update(['email' => $this->email]);
-            } else {
-                $this->selectedContact->emails()->create(['email' => $this->email]);
-            }
-        } elseif ($existingEmail) {
-            $existingEmail->delete();
-        }
-
-        // Update or create phone
-        $existingPhone = $this->selectedContact->numeroTelephones()->first();
-        if ($this->telephone) {
-            if ($existingPhone) {
-                $existingPhone->update(['numero_telephone' => $this->telephone]);
-            } else {
-                $this->selectedContact->numeroTelephones()->create(['numero_telephone' => $this->telephone]);
-            }
-        } elseif ($existingPhone) {
-            $existingPhone->delete();
-        }
 
         $this->closeModals();
         session()->flash('success', 'Contact mis à jour avec succès!');
@@ -179,24 +156,26 @@ class ContactManager extends Component
         $this->prenom = '';
         $this->email = '';
         $this->telephone = '';
-        $this->rue = '';
+        $this->adresse = '';
         $this->ville = '';
         $this->code_postal = '';
         $this->pays = 'France';
         $this->status_id = '';
+        $this->notes = '';
     }
 
     private function fillForm($contact)
     {
         $this->nom = $contact->nom;
         $this->prenom = $contact->prenom;
-        $this->email = $contact->emails()->first()?->email ?? '';
-        $this->telephone = $contact->numeroTelephones()->first()?->numero_telephone ?? '';
-        $this->rue = $contact->rue;
+        $this->email = $contact->email;
+        $this->telephone = $contact->telephone;
+        $this->adresse = $contact->adresse;
         $this->ville = $contact->ville;
         $this->code_postal = $contact->code_postal;
         $this->pays = $contact->pays;
         $this->status_id = $contact->status_id;
+        $this->notes = $contact->notes;
     }
 
     public function render()

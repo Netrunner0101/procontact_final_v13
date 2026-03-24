@@ -73,7 +73,7 @@ class ClientManagementController extends Controller
             'nom' => $validated['nom'],
             'prenom' => $validated['prenom'],
             'email' => $validated['email'],
-            'password' => $validated['password'],
+            'password' => Hash::make($validated['password']),
             'telephone' => $validated['telephone'],
         ]);
 
@@ -159,8 +159,8 @@ class ClientManagementController extends Controller
             'telephone' => $validated['telephone'],
         ];
 
-        if (!empty($validated['password'])) {
-            $updateData['password'] = $validated['password'];
+        if ($validated['password']) {
+            $updateData['password'] = Hash::make($validated['password']);
         }
 
         $client->update($updateData);
