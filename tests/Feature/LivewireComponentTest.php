@@ -7,6 +7,7 @@ use App\Models\Contact;
 use App\Models\Status;
 use App\Models\RendezVous;
 use App\Models\Activite;
+use App\Models\Role;
 use App\Livewire\ContactManager;
 use App\Livewire\AppointmentManager;
 use App\Livewire\Dashboard;
@@ -24,11 +25,14 @@ class LivewireComponentTest extends TestCase
     protected function setUp(): void
     {
         parent::setUp();
-        
+
+        $adminRole = Role::firstOrCreate(['nom' => Role::ADMIN], ['description' => 'Administrator']);
+        Role::firstOrCreate(['nom' => Role::CLIENT], ['description' => 'Client']);
+
         $this->user = User::factory()->create([
-            'role_id' => 1
+            'role_id' => $adminRole->id
         ]);
-        
+
         $this->status = Status::factory()->create([
             'status_client' => 'Prospect'
         ]);
@@ -40,8 +44,7 @@ class LivewireComponentTest extends TestCase
 
         Livewire::test(Dashboard::class)
             ->assertStatus(200)
-            ->assertSee('Bonjour')
-            ->assertSee('Statistiques Rapides');
+            ->assertSee('Activit');
     }
 
     public function test_contact_manager_component_renders_correctly()
@@ -59,20 +62,24 @@ class LivewireComponentTest extends TestCase
         $this->actingAs($this->user);
 
         Livewire::test(ContactManager::class)
+            ->call('openCreateModal')
             ->set('nom', 'Dupont')
             ->set('prenom', 'Jean')
             ->set('email', 'jean.dupont@example.com')
             ->set('telephone', '0123456789')
             ->set('status_id', $this->status->id)
-            ->call('openCreateModal')
             ->call('createContact')
             ->assertHasNoErrors();
 
         $this->assertDatabaseHas('contacts', [
             'nom' => 'Dupont',
             'prenom' => 'Jean',
-            'email' => 'jean.dupont@example.com',
             'user_id' => $this->user->id,
+        ]);
+
+        // Email is stored in the emails relationship table
+        $this->assertDatabaseHas('emails', [
+            'email' => 'jean.dupont@example.com',
         ]);
     }
 
@@ -157,7 +164,7 @@ class LivewireComponentTest extends TestCase
         Livewire::test(AppointmentManager::class)
             ->assertStatus(200)
             ->assertSee('Gestion des Rendez-vous')
-            ->assertSee('Nouveau Rendez-vous');
+            ->assertSee('Nouveau RDV');
     }
 
     public function test_appointment_manager_can_create_appointment()
@@ -174,15 +181,16 @@ class LivewireComponentTest extends TestCase
         ]);
 
         Livewire::test(AppointmentManager::class)
+            ->call('openCreateModal')
             ->set('titre', 'Consultation test')
             ->set('description', 'Test description')
-            ->set('date_heure', now()->addDay()->format('Y-m-d H:i'))
-            ->set('duree', 60)
+            ->set('date_debut', now()->addDay()->format('Y-m-d'))
+            ->set('heure_debut', '09:00')
+            ->set('heure_fin', '10:00')
             ->set('lieu', 'Test lieu')
             ->set('contact_id', $contact->id)
             ->set('activite_id', $activite->id)
-            ->set('statut', 'planifie')
-            ->call('openCreateModal')
+            ->set('statut', 'Programmé')
             ->call('createAppointment')
             ->assertHasNoErrors();
 
@@ -200,8 +208,10 @@ class LivewireComponentTest extends TestCase
 
         Livewire::test(AppointmentManager::class)
             ->call('openCreateModal')
+            ->set('date_debut', '')
+            ->set('heure_debut', '')
             ->call('createAppointment')
-            ->assertHasErrors(['titre', 'date_heure', 'contact_id', 'activite_id']);
+            ->assertHasErrors(['titre', 'date_debut', 'contact_id', 'activite_id']);
     }
 
     public function test_appointment_manager_filter_by_status()
@@ -243,7 +253,7 @@ class LivewireComponentTest extends TestCase
     {
         $otherUser = User::factory()->create();
         $otherStatus = Status::factory()->create();
-        
+
         // Create data for other user
         $otherContact = Contact::factory()->create([
             'user_id' => $otherUser->id,

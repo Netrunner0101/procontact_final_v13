@@ -11,7 +11,7 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::apiResource('contacts', ContactApiController::class);
 
     // Rendez-vous CRUD
-    Route::apiResource('rendez-vous', RendezVousApiController::class);
+    Route::apiResource('rendez-vous', RendezVousApiController::class)->parameters(['rendez-vous' => 'rendezVous']);
 
     // Statistics
     Route::get('statistics', [StatistiqueApiController::class, 'index']);

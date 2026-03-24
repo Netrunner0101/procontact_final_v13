@@ -97,7 +97,7 @@
                 </div>
 
                 <!-- Notes Section -->
-                @if($rendezVous->notes->count() > 0)
+                @if($rendezVous->notes && $rendezVous->notes->count() > 0)
                     <div class="bg-white rounded-lg shadow p-6">
                         <h2 class="text-xl font-semibold text-gray-900 mb-4">Notes associées</h2>
                         <div class="space-y-4">
@@ -115,7 +115,7 @@
                 @endif
 
                 <!-- Reminders Section -->
-                @if($rendezVous->rappels->count() > 0)
+                @if($rendezVous->rappels && $rendezVous->rappels->count() > 0)
                     <div class="bg-white rounded-lg shadow p-6">
                         <h2 class="text-xl font-semibold text-gray-900 mb-4">Rappels</h2>
                         <div class="space-y-3">
@@ -155,13 +155,13 @@
                         <div>
                             <p class="font-medium text-gray-900">{{ $rendezVous->contact->prenom }} {{ $rendezVous->contact->nom }}</p>
                         </div>
-                        @if($rendezVous->contact->emails->count() > 0)
+                        @if($rendezVous->contact->emails && $rendezVous->contact->emails->count() > 0)
                             <div>
                                 <label class="text-xs text-gray-500">Email</label>
                                 <p class="text-sm text-gray-900">{{ $rendezVous->contact->emails->first()->email }}</p>
                             </div>
                         @endif
-                        @if($rendezVous->contact->numeroTelephones->count() > 0)
+                        @if($rendezVous->contact->numeroTelephones && $rendezVous->contact->numeroTelephones->count() > 0)
                             <div>
                                 <label class="text-xs text-gray-500">Téléphone</label>
                                 <p class="text-sm text-gray-900">{{ $rendezVous->contact->numeroTelephones->first()->numero_telephone }}</p>

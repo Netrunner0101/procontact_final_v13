@@ -55,7 +55,7 @@ class ClientManagementController extends Controller
         $contactId = null;
 
         // If contact is selected, verify it belongs to the current admin
-        if ($validated['contact_id']) {
+        if (!empty($validated['contact_id'])) {
             $contact = Contact::where('user_id', Auth::id())->findOrFail($validated['contact_id']);
             $validated['nom'] = $contact->nom;
             $validated['prenom'] = $contact->prenom;
@@ -74,11 +74,11 @@ class ClientManagementController extends Controller
             'prenom' => $validated['prenom'],
             'email' => $validated['email'],
             'password' => $validated['password'],
-            'telephone' => $validated['telephone'],
+            'telephone' => $validated['telephone'] ?? null,
+            'role_id' => $clientRole->id,
         ]);
 
-        // Set protected fields (not mass-assignable)
-        $client->role_id = $clientRole->id;
+        // Set additional fields
         $client->admin_user_id = Auth::id();
         $client->contact_id = $contactId;
         $client->save();

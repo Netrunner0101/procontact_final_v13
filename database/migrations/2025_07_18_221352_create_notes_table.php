@@ -13,12 +13,12 @@ return new class extends Migration
     {
         Schema::create('notes', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('rendez_vous_id')->constrained('rendez_vous')->onDelete('cascade');
+            $table->foreignId('rendez_vous_id')->nullable()->constrained('rendez_vous')->onDelete('cascade');
             $table->foreignId('activite_id')->nullable()->constrained()->onDelete('set null');
             $table->string('titre');
             $table->text('commentaire');
-            $table->dateTime('date_create');
-            $table->dateTime('date_update');
+            $table->dateTime('date_create')->nullable();
+            $table->dateTime('date_update')->nullable();
             $table->timestamps();
         });
     }
