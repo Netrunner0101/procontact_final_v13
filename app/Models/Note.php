@@ -17,6 +17,8 @@ class Note extends Model
         'titre',
         'commentaire',
         'is_shared_with_client',
+        'priorite',
+        'contact_id',
         'date_create',
         'date_update',
     ];
@@ -26,6 +28,22 @@ class Note extends Model
         'date_update' => 'datetime',
         'is_shared_with_client' => 'boolean',
     ];
+
+    /**
+     * Get the user that owns the note.
+     */
+    public function user(): BelongsTo
+    {
+        return $this->belongsTo(User::class);
+    }
+
+    /**
+     * Get the contact associated with the note.
+     */
+    public function contact(): BelongsTo
+    {
+        return $this->belongsTo(Contact::class);
+    }
 
     /**
      * Get the appointment that owns the note.
