@@ -26,9 +26,11 @@ class ActiviteController extends Controller
         $validated = $request->validate([
             'nom' => 'required|string|max:255',
             'description' => 'nullable|string',
-            'numero_telephone' => 'nullable|string|max:20',
+            'numero_telephone' => 'nullable|regex:/^[0-9+\-\s()]+$/|max:20',
             'email' => 'nullable|email|max:255',
             'image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
+        ], [
+            'numero_telephone.regex' => 'Le numéro de téléphone ne doit contenir que des chiffres, +, -, espaces ou parenthèses.',
         ]);
 
         if ($request->hasFile('image')) {
@@ -61,9 +63,11 @@ class ActiviteController extends Controller
         $validated = $request->validate([
             'nom' => 'required|string|max:255',
             'description' => 'nullable|string',
-            'numero_telephone' => 'nullable|string|max:20',
+            'numero_telephone' => 'nullable|regex:/^[0-9+\-\s()]+$/|max:20',
             'email' => 'nullable|email|max:255',
             'image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
+        ], [
+            'numero_telephone.regex' => 'Le numéro de téléphone ne doit contenir que des chiffres, +, -, espaces ou parenthèses.',
         ]);
 
         if ($request->hasFile('image')) {

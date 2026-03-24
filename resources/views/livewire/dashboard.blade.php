@@ -1,5 +1,7 @@
 <div>
     {{-- Activity Dashboard - Sophisticated Architect Theme --}}
+    @php($activities = $activities ?? collect())
+    @php($stats = $stats ?? [])
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <!-- Header -->
         <div class="mb-8">
@@ -8,10 +10,10 @@
         </div>
 
         <!-- Activities Grid -->
-        @if($activities->count() > 0)
+        @if(count($activities) > 0)
             <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                 @foreach($activities as $activity)
-                    <a href="{{ route('activites.view', $activity->id) }}"
+                    <a href="{{ route('activites.show', $activity->id) }}"
                        class="activity-card block rounded-2xl overflow-hidden group"
                        wire:key="activity-{{ $activity->id }}"
                        style="background: white; box-shadow: 0 2px 8px rgba(27,28,26,0.03);">
@@ -80,7 +82,7 @@
         @endif
 
         <!-- Quick Stats Summary -->
-        @if($activities->count() > 0)
+        @if(count($activities) > 0)
             <div class="mt-10 grid grid-cols-2 md:grid-cols-4 gap-4">
                 <div class="rounded-xl p-5 text-center" style="background: white; box-shadow: 0 2px 8px rgba(27,28,26,0.03);">
                     <div class="text-3xl font-bold" style="color: #843728;">{{ $stats['activities'] }}</div>

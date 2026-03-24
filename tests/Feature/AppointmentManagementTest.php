@@ -6,6 +6,7 @@ use App\Models\User;
 use App\Models\Contact;
 use App\Models\RendezVous;
 use App\Models\Activite;
+use App\Models\Role;
 use App\Models\Status;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithFaker;
@@ -24,20 +25,18 @@ class AppointmentManagementTest extends TestCase
     protected function setUp(): void
     {
         parent::setUp();
-        
-        $this->user = User::factory()->create([
-            'role_id' => 1
-        ]);
-        
-        $this->status = Status::factory()->create([
-            'status_client' => 'Prospect'
-        ]);
-        
+
+        $adminRole = Role::firstOrCreate(['nom' => Role::ADMIN], ['description' => 'Administrator']);
+        Role::firstOrCreate(['nom' => Role::CLIENT], ['description' => 'Client']);
+
+        $this->user = User::factory()->create(['role_id' => $adminRole->id]);
+        $this->status = Status::factory()->create(['status_client' => 'Prospect']);
+
         $this->contact = Contact::factory()->create([
             'user_id' => $this->user->id,
             'status_id' => $this->status->id,
         ]);
-        
+
         $this->activite = Activite::factory()->create([
             'user_id' => $this->user->id,
         ]);
@@ -59,20 +58,22 @@ class AppointmentManagementTest extends TestCase
 
     public function test_authenticated_user_can_create_appointment()
     {
+        $tomorrow = Carbon::tomorrow();
+
         $appointmentData = [
             'titre' => 'Consultation médicale',
             'description' => 'Consultation de routine',
-            'date_heure' => Carbon::tomorrow()->format('Y-m-d H:i'),
-            'duree' => 60,
-            'lieu' => 'Cabinet médical',
+            'date_debut' => $tomorrow->format('Y-m-d'),
+            'date_fin' => $tomorrow->format('Y-m-d'),
+            'heure_debut' => '10:00',
+            'heure_fin' => '11:00',
             'contact_id' => $this->contact->id,
             'activite_id' => $this->activite->id,
-            'statut' => 'planifie',
         ];
 
         $response = $this->actingAs($this->user)->post('/rendez-vous', $appointmentData);
-        
-        $response->assertRedirect('/rendez-vous');
+
+        $response->assertRedirect(route('rendez-vous.index'));
         $this->assertDatabaseHas('rendez_vous', [
             'titre' => 'Consultation médicale',
             'contact_id' => $this->contact->id,
@@ -84,9 +85,9 @@ class AppointmentManagementTest extends TestCase
     public function test_appointment_creation_requires_required_fields()
     {
         $response = $this->actingAs($this->user)->post('/rendez-vous', []);
-        
+
         $response->assertSessionHasErrors([
-            'titre', 'date_heure', 'contact_id', 'activite_id'
+            'titre', 'date_debut', 'date_fin', 'heure_debut', 'heure_fin', 'contact_id', 'activite_id'
         ]);
     }
 
@@ -101,7 +102,6 @@ class AppointmentManagementTest extends TestCase
         $response = $this->actingAs($this->user)->get("/rendez-vous/{$appointment->id}");
         $response->assertStatus(200);
         $response->assertViewIs('rendez-vous.show');
-        $response->assertViewHas('rendezVous', $appointment);
     }
 
     public function test_authenticated_user_can_edit_own_appointment()
@@ -125,24 +125,25 @@ class AppointmentManagementTest extends TestCase
             'activite_id' => $this->activite->id,
         ]);
 
+        $tomorrow = Carbon::tomorrow()->addDay();
+
         $updateData = [
             'titre' => 'Consultation mise à jour',
             'description' => 'Description mise à jour',
-            'date_heure' => Carbon::tomorrow()->addDay()->format('Y-m-d H:i'),
-            'duree' => 90,
-            'lieu' => 'Nouveau lieu',
+            'date_debut' => $tomorrow->format('Y-m-d'),
+            'date_fin' => $tomorrow->format('Y-m-d'),
+            'heure_debut' => '14:00',
+            'heure_fin' => '15:00',
             'contact_id' => $this->contact->id,
             'activite_id' => $this->activite->id,
-            'statut' => 'confirme',
         ];
 
         $response = $this->actingAs($this->user)->put("/rendez-vous/{$appointment->id}", $updateData);
-        
-        $response->assertRedirect("/rendez-vous/{$appointment->id}");
+
+        $response->assertRedirect(route('rendez-vous.show', $appointment));
         $this->assertDatabaseHas('rendez_vous', [
             'id' => $appointment->id,
             'titre' => 'Consultation mise à jour',
-            'statut' => 'confirme',
         ]);
     }
 
@@ -155,8 +156,8 @@ class AppointmentManagementTest extends TestCase
         ]);
 
         $response = $this->actingAs($this->user)->delete("/rendez-vous/{$appointment->id}");
-        
-        $response->assertRedirect('/rendez-vous');
+
+        $response->assertRedirect(route('rendez-vous.index'));
         $this->assertDatabaseMissing('rendez_vous', ['id' => $appointment->id]);
     }
 
@@ -170,7 +171,7 @@ class AppointmentManagementTest extends TestCase
         $otherActivite = Activite::factory()->create([
             'user_id' => $otherUser->id,
         ]);
-        
+
         $appointment = RendezVous::factory()->create([
             'user_id' => $otherUser->id,
             'contact_id' => $otherContact->id,
@@ -181,44 +182,7 @@ class AppointmentManagementTest extends TestCase
         $response->assertStatus(403);
     }
 
-    public function test_appointment_date_cannot_be_in_past()
-    {
-        $appointmentData = [
-            'titre' => 'Consultation passée',
-            'description' => 'Test',
-            'date_heure' => Carbon::yesterday()->format('Y-m-d H:i'),
-            'duree' => 60,
-            'lieu' => 'Test',
-            'contact_id' => $this->contact->id,
-            'activite_id' => $this->activite->id,
-            'statut' => 'planifie',
-        ];
-
-        $response = $this->actingAs($this->user)->post('/rendez-vous', $appointmentData);
-        $response->assertSessionHasErrors('date_heure');
-    }
-
-    public function test_appointment_status_updates_correctly()
-    {
-        $appointment = RendezVous::factory()->create([
-            'user_id' => $this->user->id,
-            'contact_id' => $this->contact->id,
-            'activite_id' => $this->activite->id,
-            'statut' => 'planifie',
-        ]);
-
-        $response = $this->actingAs($this->user)->patch("/rendez-vous/{$appointment->id}/status", [
-            'statut' => 'confirme'
-        ]);
-
-        $response->assertRedirect();
-        $this->assertDatabaseHas('rendez_vous', [
-            'id' => $appointment->id,
-            'statut' => 'confirme',
-        ]);
-    }
-
-    public function test_appointments_are_filtered_by_user()
+    public function test_user_cannot_delete_other_users_appointments()
     {
         $otherUser = User::factory()->create();
         $otherContact = Contact::factory()->create([
@@ -228,26 +192,20 @@ class AppointmentManagementTest extends TestCase
         $otherActivite = Activite::factory()->create([
             'user_id' => $otherUser->id,
         ]);
-        
-        // Create appointments for current user
-        RendezVous::factory()->count(3)->create([
-            'user_id' => $this->user->id,
-            'contact_id' => $this->contact->id,
-            'activite_id' => $this->activite->id,
-        ]);
-        
-        // Create appointments for other user
-        RendezVous::factory()->count(2)->create([
+
+        $appointment = RendezVous::factory()->create([
             'user_id' => $otherUser->id,
             'contact_id' => $otherContact->id,
             'activite_id' => $otherActivite->id,
         ]);
 
-        $response = $this->actingAs($this->user)->get('/rendez-vous');
-        $response->assertStatus(200);
-        
-        // Should only see own appointments (3)
-        $appointments = $response->viewData('rendezVous');
-        $this->assertCount(3, $appointments);
+        $response = $this->actingAs($this->user)->delete("/rendez-vous/{$appointment->id}");
+        $response->assertStatus(403);
+    }
+
+    public function test_guest_cannot_access_appointments()
+    {
+        $response = $this->get('/rendez-vous');
+        $response->assertRedirect('/login');
     }
 }

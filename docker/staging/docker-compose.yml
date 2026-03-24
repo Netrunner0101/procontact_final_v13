@@ -1,0 +1,38 @@
+version: '3.8'
+
+services:
+  laravel-app:
+    build:
+      context: ../..
+      dockerfile: docker/staging/Dockerfile
+    container_name: laravel-staging
+    restart: unless-stopped
+    working_dir: /var/www/html
+    volumes:
+      - ../..:/var/www/html
+    environment:
+      DB_CONNECTION: pgsql
+      DB_HOST: procontact-db
+      DB_PORT: 5432
+      DB_DATABASE: procontact_staging
+      DB_USERNAME: laravel
+      DB_PASSWORD: mysecret
+      APP_URL: http://72.60.23.156
+    networks:
+      - services-network
+
+  nginx:
+    image: nginx:alpine
+    container_name: nginx-staging
+    restart: unless-stopped
+    ports:
+      - "8083:80"
+    volumes:
+      - ../..:/var/www/html
+      - ./nginx.conf:/etc/nginx/conf.d/default.conf
+    networks:
+      - services-network
+
+networks:
+  services-network:
+    external: true
