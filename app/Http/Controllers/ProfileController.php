@@ -62,7 +62,7 @@ class ProfileController extends Controller
         }
         
         $user->update([
-            'password' => Hash::make($request->password)
+            'password' => $request->password
         ]);
         
         return back()->with('success', 'Mot de passe mis à jour avec succès.');

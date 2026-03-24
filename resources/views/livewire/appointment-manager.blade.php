@@ -217,12 +217,6 @@
                         </div>
 
                         <div class="form-group">
-                            <label for="duree" class="form-label">Durée (minutes) *</label>
-                            <input type="number" id="duree" wire:model="duree" class="form-input" min="15" max="480" required>
-                            @error('duree') <span class="error-message">{{ $message }}</span> @enderror
-                        </div>
-
-                        <div class="form-group">
                             <label for="statut" class="form-label">Statut *</label>
                             <select id="statut" wire:model="statut" class="form-select" required>
                                 <option value="Programmé">Programmé</option>
