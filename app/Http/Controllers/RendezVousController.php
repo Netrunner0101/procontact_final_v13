@@ -70,7 +70,7 @@ class RendezVousController extends Controller
     public function show(RendezVous $rendezVous)
     {
         $this->authorize('view', $rendezVous);
-        $rendezVous->load(['contact', 'activite', 'notes', 'rappels']);
+        $rendezVous->load(['contact.emails', 'contact.numeroTelephones', 'activite', 'notes', 'rappels']);
         return view('rendez-vous.show', compact('rendezVous'));
     }
 

@@ -70,16 +70,16 @@ class NoteController extends Controller
         $validated['user_id'] = Auth::id();
 
         // Verify ownership of related entities
-        if ($validated['contact_id']) {
-            $contact = Contact::where('user_id', Auth::id())->findOrFail($validated['contact_id']);
+        if (!empty($validated['contact_id'])) {
+            Contact::where('user_id', Auth::id())->findOrFail($validated['contact_id']);
         }
-        
-        if ($validated['activite_id']) {
-            $activite = Activite::where('user_id', Auth::id())->findOrFail($validated['activite_id']);
+
+        if (!empty($validated['activite_id'])) {
+            Activite::where('user_id', Auth::id())->findOrFail($validated['activite_id']);
         }
-        
-        if ($validated['rendez_vous_id']) {
-            $rendezVous = RendezVous::where('user_id', Auth::id())->findOrFail($validated['rendez_vous_id']);
+
+        if (!empty($validated['rendez_vous_id'])) {
+            RendezVous::where('user_id', Auth::id())->findOrFail($validated['rendez_vous_id']);
         }
 
         $note = Note::create($validated);
@@ -133,16 +133,16 @@ class NoteController extends Controller
         ]);
 
         // Verify ownership of related entities
-        if ($validated['contact_id']) {
-            $contact = Contact::where('user_id', Auth::id())->findOrFail($validated['contact_id']);
+        if (!empty($validated['contact_id'])) {
+            Contact::where('user_id', Auth::id())->findOrFail($validated['contact_id']);
         }
-        
-        if ($validated['activite_id']) {
-            $activite = Activite::where('user_id', Auth::id())->findOrFail($validated['activite_id']);
+
+        if (!empty($validated['activite_id'])) {
+            Activite::where('user_id', Auth::id())->findOrFail($validated['activite_id']);
         }
-        
-        if ($validated['rendez_vous_id']) {
-            $rendezVous = RendezVous::where('user_id', Auth::id())->findOrFail($validated['rendez_vous_id']);
+
+        if (!empty($validated['rendez_vous_id'])) {
+            RendezVous::where('user_id', Auth::id())->findOrFail($validated['rendez_vous_id']);
         }
 
         $note->update($validated);

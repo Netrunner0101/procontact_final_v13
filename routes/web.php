@@ -98,7 +98,7 @@ Route::middleware(['auth', 'admin'])->group(function () {
     
     Route::resource('contacts', ContactController::class);
     Route::resource('activites', ActiviteController::class);
-    Route::resource('rendez-vous', RendezVousController::class);
+    Route::resource('rendez-vous', RendezVousController::class)->parameters(['rendez-vous' => 'rendezVous']);
     
     // Contact-Activity relationship routes
     Route::post('activites/{activite}/contacts', [ActiviteController::class, 'attachContact'])->name('activites.contacts.attach');

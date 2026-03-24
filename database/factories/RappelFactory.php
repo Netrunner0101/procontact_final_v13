@@ -14,6 +14,7 @@ class RappelFactory extends Factory
     {
         return [
             'rendez_vous_id' => RendezVous::factory(),
+            'user_id' => \App\Models\User::factory(),
             'date_rappel' => $this->faker->dateTimeBetween('now', '+1 month'),
             'frequence' => $this->faker->randomElement(['quotidien', 'hebdomadaire', 'mensuel']),
         ];
