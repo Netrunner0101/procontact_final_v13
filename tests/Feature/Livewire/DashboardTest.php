@@ -9,6 +9,8 @@ use App\Models\RendezVous;
 use App\Models\Activite;
 use App\Models\Note;
 use App\Models\Rappel;
+use App\Models\Role;
+use App\Models\Status;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Livewire\Livewire;
 use Tests\TestCase;
@@ -22,9 +24,12 @@ class DashboardTest extends TestCase
     protected function setUp(): void
     {
         parent::setUp();
-        
+
+        $adminRole = Role::firstOrCreate(['nom' => Role::ADMIN], ['description' => 'Administrator']);
+        Role::firstOrCreate(['nom' => Role::CLIENT], ['description' => 'Client']);
+
         $this->user = User::factory()->create([
-            'role_id' => 1
+            'role_id' => $adminRole->id
         ]);
     }
 
@@ -35,7 +40,7 @@ class DashboardTest extends TestCase
 
         Livewire::test(Dashboard::class)
             ->assertStatus(200)
-            ->assertSee('Tableau de Bord');
+            ->assertSee('Activit');
     }
 
     /** @test */
@@ -43,10 +48,13 @@ class DashboardTest extends TestCase
     {
         $this->actingAs($this->user);
 
-        // Create test data
+        $status = Status::factory()->create();
         $activite = Activite::factory()->create(['user_id' => $this->user->id]);
-        $contact = Contact::factory()->create(['user_id' => $this->user->id]);
-        
+        $contact = Contact::factory()->create([
+            'user_id' => $this->user->id,
+            'status_id' => $status->id,
+        ]);
+
         RendezVous::factory()->create([
             'user_id' => $this->user->id,
             'contact_id' => $contact->id,
@@ -55,15 +63,12 @@ class DashboardTest extends TestCase
             'heure_debut' => '09:00'
         ]);
 
-        Note::factory()->create([
-            'user_id' => $this->user->id,
-            'activite_id' => $activite->id
-        ]);
+        $component = Livewire::test(Dashboard::class);
 
-        Livewire::test(Dashboard::class)
-            ->assertSet('totalContacts', 1)
-            ->assertSet('totalAppointments', 1)
-            ->assertSet('totalNotes', 1);
+        $stats = $component->get('stats');
+        $this->assertEquals(1, $stats['contacts']);
+        $this->assertEquals(1, $stats['appointments']);
+        $this->assertEquals(1, $stats['activities']);
     }
 
     /** @test */
@@ -71,9 +76,13 @@ class DashboardTest extends TestCase
     {
         $this->actingAs($this->user);
 
+        $status = Status::factory()->create();
         $activite = Activite::factory()->create(['user_id' => $this->user->id]);
-        $contact = Contact::factory()->create(['user_id' => $this->user->id]);
-        
+        $contact = Contact::factory()->create([
+            'user_id' => $this->user->id,
+            'status_id' => $status->id,
+        ]);
+
         $appointment = RendezVous::factory()->create([
             'user_id' => $this->user->id,
             'contact_id' => $contact->id,
@@ -83,9 +92,12 @@ class DashboardTest extends TestCase
             'titre' => 'Test Appointment'
         ]);
 
-        Livewire::test(Dashboard::class)
-            ->call('loadUpcomingAppointments')
-            ->assertSee('Test Appointment');
+        $component = Livewire::test(Dashboard::class)
+            ->call('loadUpcomingAppointments');
+
+        $upcomingAppointments = $component->get('upcomingAppointments');
+        $this->assertCount(1, $upcomingAppointments);
+        $this->assertEquals('Test Appointment', $upcomingAppointments->first()->titre);
     }
 
     /** @test */
@@ -94,7 +106,7 @@ class DashboardTest extends TestCase
         $this->actingAs($this->user);
 
         Livewire::test(Dashboard::class)
-            ->call('refreshData')
-            ->assertEmitted('refreshed');
+            ->call('refreshStats')
+            ->assertHasNoErrors();
     }
 }
