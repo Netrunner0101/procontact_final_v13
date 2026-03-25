@@ -17,6 +17,7 @@
 
     <!-- Scripts -->
     @vite(['resources/css/app.css', 'resources/js/app.js'])
+    <script src="https://cdn.tailwindcss.com"></script>
 
     <!-- Livewire Styles -->
     @livewireStyles
@@ -48,37 +49,10 @@
                                 <i class="fas fa-briefcase"></i>
                                 <span>Activit&eacute;s</span>
                             </a>
-                            <a href="{{ route('contacts.manager') }}" class="nav-link {{ request()->routeIs('contacts.*') ? 'nav-link-active' : '' }}">
-                                <i class="fas fa-address-book"></i>
-                                <span>Contacts</span>
-                            </a>
-                            <a href="{{ route('appointments.manager') }}" class="nav-link {{ request()->routeIs('appointments.*') || request()->routeIs('rendez-vous.*') ? 'nav-link-active' : '' }}">
-                                <i class="fas fa-calendar-alt"></i>
-                                <span>Rendez-vous</span>
-                            </a>
-                            <a href="{{ route('notes.manager') }}" class="nav-link {{ request()->routeIs('notes.*') ? 'nav-link-active' : '' }}">
-                                <i class="fas fa-sticky-note"></i>
-                                <span>Notes</span>
-                            </a>
-                            <a href="{{ route('statistics.dashboard') }}" class="nav-link {{ request()->routeIs('statistics.*') || request()->routeIs('statistiques.*') ? 'nav-link-active' : '' }}">
-                                <i class="fas fa-chart-bar"></i>
-                                <span>Statistiques</span>
-                            </a>
                         </div>
                     </div>
 
-                    <!-- Mobile menu button -->
-                    <div class="flex items-center sm:hidden">
-                        @auth
-                            <button type="button" onclick="toggleMobileMenu()" class="inline-flex items-center justify-center p-2 rounded-lg transition-colors" style="color: #44483e;" id="mobile-menu-button">
-                                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path>
-                                </svg>
-                            </button>
-                        @endauth
-                    </div>
-
-                    <!-- Settings Dropdown (desktop) -->
+                    <!-- Settings Dropdown -->
                     <div class="hidden sm:flex sm:items-center sm:ml-6">
                         <div class="ml-3 relative">
                             @auth
@@ -126,55 +100,6 @@
                 </div>
             </div>
         </nav>
-
-        <!-- Mobile Menu -->
-        @auth
-        <div id="mobile-menu" class="hidden sm:hidden" style="background: #ffffff; border-bottom: 1px solid #e9e6e3;">
-            <div class="px-4 py-3 space-y-1">
-                <a href="{{ route('dashboard') }}" class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium {{ request()->routeIs('dashboard') ? '' : '' }}" style="color: {{ request()->routeIs('dashboard') ? '#843728' : '#44483e' }}; background: {{ request()->routeIs('dashboard') ? 'rgba(255,219,209,0.3)' : 'transparent' }};">
-                    <i class="fas fa-tachometer-alt"></i>
-                    Dashboard
-                </a>
-                <a href="{{ route('activites.index') }}" class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium" style="color: {{ request()->routeIs('activites.*') ? '#843728' : '#44483e' }}; background: {{ request()->routeIs('activites.*') ? 'rgba(255,219,209,0.3)' : 'transparent' }};">
-                    <i class="fas fa-briefcase"></i>
-                    Activit&eacute;s
-                </a>
-                <a href="{{ route('contacts.manager') }}" class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium" style="color: {{ request()->routeIs('contacts.*') ? '#843728' : '#44483e' }}; background: {{ request()->routeIs('contacts.*') ? 'rgba(255,219,209,0.3)' : 'transparent' }};">
-                    <i class="fas fa-address-book"></i>
-                    Contacts
-                </a>
-                <a href="{{ route('appointments.manager') }}" class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium" style="color: {{ request()->routeIs('appointments.*') || request()->routeIs('rendez-vous.*') ? '#843728' : '#44483e' }}; background: {{ request()->routeIs('appointments.*') || request()->routeIs('rendez-vous.*') ? 'rgba(255,219,209,0.3)' : 'transparent' }};">
-                    <i class="fas fa-calendar-alt"></i>
-                    Rendez-vous
-                </a>
-                <a href="{{ route('notes.manager') }}" class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium" style="color: {{ request()->routeIs('notes.*') ? '#843728' : '#44483e' }}; background: {{ request()->routeIs('notes.*') ? 'rgba(255,219,209,0.3)' : 'transparent' }};">
-                    <i class="fas fa-sticky-note"></i>
-                    Notes
-                </a>
-                <a href="{{ route('statistics.dashboard') }}" class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium" style="color: {{ request()->routeIs('statistics.*') || request()->routeIs('statistiques.*') ? '#843728' : '#44483e' }}; background: {{ request()->routeIs('statistics.*') || request()->routeIs('statistiques.*') ? 'rgba(255,219,209,0.3)' : 'transparent' }};">
-                    <i class="fas fa-chart-bar"></i>
-                    Statistiques
-                </a>
-            </div>
-            <div class="px-4 py-3" style="border-top: 1px solid #e9e6e3;">
-                <div class="px-3 py-2 mb-2">
-                    <div class="text-sm font-semibold" style="color: #1b1c1a;">{{ Auth::user()->prenom }} {{ Auth::user()->nom }}</div>
-                    <div class="text-xs" style="color: #75786c;">{{ Auth::user()->email }}</div>
-                </div>
-                <a href="{{ route('profile.show') }}" class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium" style="color: #44483e;">
-                    <i class="fas fa-user"></i>
-                    Mon Profil
-                </a>
-                <form method="POST" action="{{ route('logout') }}">
-                    @csrf
-                    <button type="submit" class="flex items-center gap-3 w-full text-left px-3 py-2.5 rounded-lg text-sm font-medium" style="color: #843728;">
-                        <i class="fas fa-sign-out-alt"></i>
-                        Se d&eacute;connecter
-                    </button>
-                </form>
-            </div>
-        </div>
-        @endauth
 
         <!-- Page Content -->
         <main>
@@ -282,14 +207,6 @@
     </style>
 
     <script>
-        function toggleMobileMenu() {
-            const menu = document.getElementById('mobile-menu');
-            menu.classList.toggle('hidden');
-            if (!menu.classList.contains('hidden')) {
-                menu.classList.add('fade-in-up');
-            }
-        }
-
         function toggleUserMenu() {
             const menu = document.getElementById('user-menu');
             menu.classList.toggle('hidden');

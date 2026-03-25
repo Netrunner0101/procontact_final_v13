@@ -37,6 +37,7 @@ class AppointmentManager extends Component
     public $heure_fin = '';
     public $titre = '';
     public $description = '';
+    public $duree = 60;
     public $statut = 'Programmé';
     public $notes = '';
     public $lieu = '';
@@ -145,9 +146,6 @@ class AppointmentManager extends Component
             'date_fin' => $this->date_fin ?: $this->date_debut,
             'heure_debut' => $this->heure_debut,
             'heure_fin' => $this->heure_fin ?: $this->heure_debut,
-            'statut' => $this->statut,
-            'lieu' => $this->lieu,
-            'notes' => $this->notes,
             'user_id' => Auth::id(),
         ]);
 
@@ -168,9 +166,6 @@ class AppointmentManager extends Component
             'date_fin' => $this->date_fin ?: $this->date_debut,
             'heure_debut' => $this->heure_debut,
             'heure_fin' => $this->heure_fin ?: $this->heure_debut,
-            'statut' => $this->statut,
-            'lieu' => $this->lieu,
-            'notes' => $this->notes,
         ]);
 
         $this->closeModals();
@@ -201,6 +196,7 @@ class AppointmentManager extends Component
         $this->date_fin = '';
         $this->heure_debut = '09:00';
         $this->heure_fin = '10:00';
+        $this->duree = 60;
         $this->statut = 'Programmé';
         $this->notes = '';
         $this->lieu = '';
@@ -216,9 +212,6 @@ class AppointmentManager extends Component
         $this->date_fin = $appointment->date_fin ? $appointment->date_fin->format('Y-m-d') : '';
         $this->heure_debut = $appointment->heure_debut->format('H:i');
         $this->heure_fin = $appointment->heure_fin ? $appointment->heure_fin->format('H:i') : '';
-        $this->statut = $appointment->statut ?? 'Programmé';
-        $this->lieu = $appointment->lieu ?? '';
-        $this->notes = $appointment->notes ?? '';
     }
 
     public function render()

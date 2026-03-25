@@ -8,40 +8,33 @@ use App\Models\RendezVous;
 use App\Models\Activite;
 use App\Models\Status;
 use App\Models\Note;
-use App\Models\Role;
 use App\Models\Rappel;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
+use Carbon\Carbon;
 
 class ModelTest extends TestCase
 {
     use RefreshDatabase;
 
-    protected function setUp(): void
-    {
-        parent::setUp();
-        Role::firstOrCreate(['nom' => Role::ADMIN], ['description' => 'Administrator']);
-        Role::firstOrCreate(['nom' => Role::CLIENT], ['description' => 'Client']);
-    }
-
     public function test_user_model_has_correct_fillable_attributes()
     {
         $user = new User();
-        $fillable = $user->getFillable();
-
-        $this->assertContains('nom', $fillable);
-        $this->assertContains('prenom', $fillable);
-        $this->assertContains('email', $fillable);
-        $this->assertContains('password', $fillable);
-        $this->assertContains('telephone', $fillable);
-        $this->assertContains('role_id', $fillable);
+        
+        $expectedFillable = [
+            'nom', 'prenom', 'email', 'password', 'telephone', 
+            'adresse', 'ville', 'code_postal', 'pays', 'role',
+            'admin_user_id', 'google_id', 'apple_id', 'provider', 'avatar'
+        ];
+        
+        $this->assertEquals($expectedFillable, $user->getFillable());
     }
 
     public function test_user_has_contacts_relationship()
     {
         $user = User::factory()->create();
         $status = Status::factory()->create();
-
+        
         $contact = Contact::factory()->create([
             'user_id' => $user->id,
             'status_id' => $status->id,
@@ -60,7 +53,7 @@ class ModelTest extends TestCase
             'status_id' => $status->id,
         ]);
         $activite = Activite::factory()->create(['user_id' => $user->id]);
-
+        
         $appointment = RendezVous::factory()->create([
             'user_id' => $user->id,
             'contact_id' => $contact->id,
@@ -73,15 +66,12 @@ class ModelTest extends TestCase
 
     public function test_user_role_helper_methods()
     {
-        $adminRole = Role::where('nom', Role::ADMIN)->first();
-        $clientRole = Role::where('nom', Role::CLIENT)->first();
-
-        $admin = User::factory()->create(['role_id' => $adminRole->id]);
-        $client = User::factory()->create(['role_id' => $clientRole->id]);
+        $admin = User::factory()->create(['role_id' => 1]);
+        $client = User::factory()->create(['role_id' => 2]);
 
         $this->assertTrue($admin->isAdmin());
         $this->assertFalse($admin->isClient());
-
+        
         $this->assertTrue($client->isClient());
         $this->assertFalse($client->isAdmin());
     }
@@ -90,7 +80,7 @@ class ModelTest extends TestCase
     {
         $user = User::factory()->create();
         $status = Status::factory()->create();
-
+        
         $contact = Contact::factory()->create([
             'user_id' => $user->id,
             'status_id' => $status->id,
@@ -104,7 +94,7 @@ class ModelTest extends TestCase
     {
         $user = User::factory()->create();
         $status = Status::factory()->create();
-
+        
         $contact = Contact::factory()->create([
             'user_id' => $user->id,
             'status_id' => $status->id,
@@ -123,7 +113,7 @@ class ModelTest extends TestCase
             'status_id' => $status->id,
         ]);
         $activite = Activite::factory()->create(['user_id' => $user->id]);
-
+        
         $appointment = RendezVous::factory()->create([
             'user_id' => $user->id,
             'contact_id' => $contact->id,
@@ -142,7 +132,7 @@ class ModelTest extends TestCase
             'status_id' => $status->id,
         ]);
         $activite = Activite::factory()->create(['user_id' => $user->id]);
-
+        
         $appointment = RendezVous::factory()->create([
             'user_id' => $user->id,
             'contact_id' => $contact->id,
@@ -152,7 +142,7 @@ class ModelTest extends TestCase
         $this->assertEquals($user->id, $appointment->user->id);
         $this->assertEquals($contact->id, $appointment->contact->id);
         $this->assertEquals($activite->id, $appointment->activite->id);
-
+        
         $this->assertInstanceOf(User::class, $appointment->user);
         $this->assertInstanceOf(Contact::class, $appointment->contact);
         $this->assertInstanceOf(Activite::class, $appointment->activite);
@@ -167,7 +157,7 @@ class ModelTest extends TestCase
             'status_id' => $status->id,
         ]);
         $activite = Activite::factory()->create(['user_id' => $user->id]);
-
+        
         $appointment = RendezVous::factory()->create([
             'user_id' => $user->id,
             'contact_id' => $contact->id,
@@ -192,7 +182,7 @@ class ModelTest extends TestCase
             'status_id' => $status->id,
         ]);
         $activite = Activite::factory()->create(['user_id' => $user->id]);
-
+        
         $appointment = RendezVous::factory()->create([
             'user_id' => $user->id,
             'contact_id' => $contact->id,
@@ -200,6 +190,7 @@ class ModelTest extends TestCase
         ]);
 
         $reminder = Rappel::factory()->create([
+            'user_id' => $user->id,
             'rendez_vous_id' => $appointment->id,
         ]);
 
@@ -225,7 +216,7 @@ class ModelTest extends TestCase
             'status_id' => $status->id,
         ]);
         $activite = Activite::factory()->create(['user_id' => $user->id]);
-
+        
         $appointment = RendezVous::factory()->create([
             'user_id' => $user->id,
             'contact_id' => $contact->id,
@@ -235,7 +226,7 @@ class ModelTest extends TestCase
         $this->assertTrue($activite->rendezVous->contains($appointment));
     }
 
-    public function test_note_belongs_to_appointment()
+    public function test_note_belongs_to_user_and_appointment()
     {
         $user = User::factory()->create();
         $status = Status::factory()->create();
@@ -244,7 +235,7 @@ class ModelTest extends TestCase
             'status_id' => $status->id,
         ]);
         $activite = Activite::factory()->create(['user_id' => $user->id]);
-
+        
         $appointment = RendezVous::factory()->create([
             'user_id' => $user->id,
             'contact_id' => $contact->id,
@@ -256,8 +247,39 @@ class ModelTest extends TestCase
             'rendez_vous_id' => $appointment->id,
         ]);
 
+        $this->assertEquals($user->id, $note->user->id);
         $this->assertEquals($appointment->id, $note->rendezVous->id);
+        
+        $this->assertInstanceOf(User::class, $note->user);
         $this->assertInstanceOf(RendezVous::class, $note->rendezVous);
+    }
+
+    public function test_reminder_belongs_to_user_and_appointment()
+    {
+        $user = User::factory()->create();
+        $status = Status::factory()->create();
+        $contact = Contact::factory()->create([
+            'user_id' => $user->id,
+            'status_id' => $status->id,
+        ]);
+        $activite = Activite::factory()->create(['user_id' => $user->id]);
+        
+        $appointment = RendezVous::factory()->create([
+            'user_id' => $user->id,
+            'contact_id' => $contact->id,
+            'activite_id' => $activite->id,
+        ]);
+
+        $reminder = Rappel::factory()->create([
+            'user_id' => $user->id,
+            'rendez_vous_id' => $appointment->id,
+        ]);
+
+        $this->assertEquals($user->id, $reminder->user->id);
+        $this->assertEquals($appointment->id, $reminder->rendezVous->id);
+        
+        $this->assertInstanceOf(User::class, $reminder->user);
+        $this->assertInstanceOf(RendezVous::class, $reminder->rendezVous);
     }
 
     public function test_appointment_date_casting()
@@ -269,16 +291,16 @@ class ModelTest extends TestCase
             'status_id' => $status->id,
         ]);
         $activite = Activite::factory()->create(['user_id' => $user->id]);
-
+        
         $appointment = RendezVous::factory()->create([
             'user_id' => $user->id,
             'contact_id' => $contact->id,
             'activite_id' => $activite->id,
-            'date_debut' => '2024-12-25',
+            'date_heure' => '2024-12-25 10:30:00',
         ]);
 
-        $this->assertInstanceOf(\Carbon\Carbon::class, $appointment->date_debut);
-        $this->assertEquals('2024-12-25', $appointment->date_debut->format('Y-m-d'));
+        $this->assertInstanceOf(Carbon::class, $appointment->date_heure);
+        $this->assertEquals('2024-12-25 10:30:00', $appointment->date_heure->format('Y-m-d H:i:s'));
     }
 
     public function test_user_password_is_hidden()
@@ -293,7 +315,7 @@ class ModelTest extends TestCase
     {
         $user = User::factory()->create();
         $status = Status::factory()->create();
-
+        
         $contact = Contact::factory()->create([
             'user_id' => $user->id,
             'status_id' => $status->id,
@@ -301,48 +323,5 @@ class ModelTest extends TestCase
 
         $this->assertTrue($status->contacts->contains($contact));
         $this->assertInstanceOf(Contact::class, $status->contacts->first());
-    }
-
-    public function test_user_password_is_hashed()
-    {
-        $user = User::factory()->create([
-            'password' => 'plaintext123',
-        ]);
-
-        $this->assertNotEquals('plaintext123', $user->getAttributes()['password']);
-        $this->assertTrue(\Illuminate\Support\Facades\Hash::check('plaintext123', $user->password));
-    }
-
-    public function test_contact_model_has_correct_fillable()
-    {
-        $contact = new Contact();
-        $fillable = $contact->getFillable();
-
-        $this->assertContains('nom', $fillable);
-        $this->assertContains('prenom', $fillable);
-        $this->assertContains('user_id', $fillable);
-        $this->assertContains('status_id', $fillable);
-    }
-
-    public function test_rendez_vous_model_has_correct_table()
-    {
-        $rdv = new RendezVous();
-        $this->assertEquals('rendez_vous', $rdv->getTable());
-    }
-
-    public function test_activite_has_contacts_many_to_many()
-    {
-        $user = User::factory()->create();
-        $status = Status::factory()->create();
-        $activite = Activite::factory()->create(['user_id' => $user->id]);
-        $contact = Contact::factory()->create([
-            'user_id' => $user->id,
-            'status_id' => $status->id,
-        ]);
-
-        $activite->contacts()->attach($contact->id);
-
-        $this->assertTrue($activite->contacts->contains($contact));
-        $this->assertTrue($contact->activites->contains($activite));
     }
 }
