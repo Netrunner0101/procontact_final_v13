@@ -1,7 +1,0 @@
-staging.procontact.be {
-	reverse_proxy procontact-staging-app:80
-}
-
-procontact.be {
-	reverse_proxy procontact-production-app:80
-}
