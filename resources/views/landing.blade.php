@@ -283,7 +283,7 @@
                             </tr>
                             <tr style="border-bottom: 1px solid rgba(197,200,185,0.10);">
                                 <td class="py-6 font-bold">Stack</td>
-                                <td class="py-6" style="color: var(--on-surface-variant);">PostgreSQL, Redis, Docker-ready, déploiement CI/CD automatisé</td>
+                                <td class="py-6" style="color: var(--on-surface-variant);">PostgreSQL, Laravel 12, Livewire 3, Tailwind CSS</td>
                                 <td class="py-6 text-right font-medium">Production</td>
                             </tr>
                             <tr style="border-bottom: 1px solid rgba(197,200,185,0.10);">
@@ -342,7 +342,7 @@
                     <li><a class="transition-opacity hover:opacity-80" href="#features" style="color: var(--on-surface-variant);">Composants Livewire</a></li>
                     <li><a class="transition-opacity hover:opacity-80" href="#features" style="color: var(--on-surface-variant);">Sécurité Multi-tenant</a></li>
                     <li><a class="transition-opacity hover:opacity-80" href="#specs" style="color: var(--on-surface-variant);">Intégration PostgreSQL</a></li>
-                    <li><a class="transition-opacity hover:opacity-80" href="#specs" style="color: var(--on-surface-variant);">Docker/Déploiement</a></li>
+                    <li><a class="transition-opacity hover:opacity-80" href="#specs" style="color: var(--on-surface-variant);">API REST</a></li>
                 </ul>
             </div>
             <div>
